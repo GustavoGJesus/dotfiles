@@ -18,11 +18,9 @@ channel = "stable"
 # true = Herdr captures the mouse: sidebar/tab/pane clicks work
 # (one of the tool's best features).
 # History (Jul 2026): jitter/ghost scrolling when moving the mouse over
-# Claude panes was caused by a stale inherited environment — the herdr
-# server had been started from inside WARP, so panes carried
-# TERM_PROGRAM=WarpTerminal and Claude Code switched to Warp mode inside
-# herdr/Ghostty. A guard in ~/.zshrc normalizes the env; and ALWAYS start
-# herdr from Ghostty (never from Warp).
+# Claude panes was caused by a stale environment inherited from Warp
+# (uninstalled since). If it ever comes back, the proven fallback is
+# mouse_capture = false.
 mouse_capture = true
 
 # Fine scrolling in panes: 1 line per scroll tick (web-page feel, paired

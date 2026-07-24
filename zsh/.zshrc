@@ -121,16 +121,3 @@ export CLAUDE_CODE_SCROLL_SPEED=1
 # alternate-scroll turns the wheel into ↑/↓ arrows and scrolling becomes
 # prompt-history navigation in the input instead of scrolling the chat.
 export CLAUDE_CODE_DISABLE_MOUSE=false
-
-# Herdr: if the server was started from inside Warp, panes inherit Warp's
-# FULL environment (TERM_PROGRAM=WarpTerminal + WARP_* vars). Effect:
-# Claude Code switches to Warp mode and the claude-code-warp plugin emits
-# Warp protocol sequences straight into herdr's emulator, which doesn't
-# understand them → jitter/ghost scrolling when moving the mouse over panes.
-# This guard normalizes the pane env. Golden rule: ALWAYS start herdr
-# from Ghostty (never from Warp).
-if [[ "${HERDR_ENV:-}" == "1" && "${TERM_PROGRAM:-}" == "WarpTerminal" ]]; then
-  export TERM_PROGRAM=ghostty
-  unset TERM_PROGRAM_VERSION
-  unset -m 'WARP_*' 2>/dev/null
-fi
