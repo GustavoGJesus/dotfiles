@@ -91,3 +91,9 @@ alias gl='git log --oneline --graph --decorate -20'
 # sem alias, pra não quebrar scripts que esperam o find/grep tradicionais.
 
 export EDITOR='nvim'
+
+# Claude Code: desliga o mouse-tracking do TUI (corrige "vibração"/scroll
+# fantasma ao passar o mouse sobre o chat dentro do Herdr/Ghostty).
+# Precisa estar no ambiente do PROCESSO — o bloco env do settings.json
+# não chega a tempo da inicialização do TUI.
+export CLAUDE_CODE_DISABLE_MOUSE=1
