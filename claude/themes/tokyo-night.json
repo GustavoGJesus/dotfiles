@@ -2,7 +2,7 @@
   "name": "Tokyo Night",
   "base": "dark",
   "overrides": {
-    "text": "#c0caf5",
+    "text": "#ffffff",
     "userMessageBackground": "#292e42",
     "userMessageBackgroundHover": "#343a55",
     "briefLabelYou": "#7dcfff",
