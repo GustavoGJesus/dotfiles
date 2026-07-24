@@ -1,44 +1,44 @@
 # =========================================================
-# Ghostty — configuração visual
+# Ghostty — visual configuration
 # Path: ~/Library/Application Support/com.mitchellh.ghostty/config
-# Docs: https://ghostty.org/docs/config  (todas as opções)
-# Recarregar sem fechar: Cmd+Shift+, (reload config)
+# Docs: https://ghostty.org/docs/config  (every option)
+# Reload without closing: Cmd+Shift+, (reload config)
 # =========================================================
 
 # ---------------------------------------------------------
-# TEMA
+# THEME
 # ---------------------------------------------------------
-# Tokyo Night (fundo #1a1b26). Troque por qualquer um de:
-#   ghostty +list-themes   (preview ao vivo no terminal)
+# Tokyo Night (#1a1b26 background). Swap it for any theme from:
+#   ghostty +list-themes   (live preview in the terminal)
 theme = TokyoNight Night
 
 # ---------------------------------------------------------
-# FONTE
+# FONT
 # ---------------------------------------------------------
 font-family = FiraCode Nerd Font Mono
 font-size = 14
 
-# Deixa o texto mais nítido/encorpado no macOS (Retina)
+# Crisper, fuller text on macOS (Retina)
 font-thicken = true
 
-# Respiro vertical entre as linhas (conforto de leitura)
+# Vertical breathing room between lines (reading comfort)
 adjust-cell-height = 10%
 
-# Ligatures (=>  ===  !=  ->) já vêm LIGADAS por padrão.
-# Para DESLIGAR, descomente a linha abaixo:
+# Ligatures (=>  ===  !=  ->) are ON by default.
+# To turn them OFF, uncomment the line below:
 # font-feature = -calt, -liga, -dlig
 
 # ---------------------------------------------------------
-# CORES / TRANSPARÊNCIA
+# COLORS / TRANSPARENCY
 # ---------------------------------------------------------
-# Cores mais vivas em telas Apple (P3)
+# More vivid colors on Apple displays (P3)
 window-colorspace = display-p3
 
-# Vidro fosco moderno: transparência + blur
+# Modern frosted glass: transparency + blur
 background-opacity = 0.92
 background-blur = 20
 
-# Splits sem foco ficam levemente apagados (ajuda a focar)
+# Unfocused splits dim slightly (helps you focus)
 unfocused-split-opacity = 0.85
 
 # ---------------------------------------------------------
@@ -48,49 +48,49 @@ cursor-style = bar
 cursor-style-blink = true
 
 # ---------------------------------------------------------
-# JANELA / macOS
+# WINDOW / macOS
 # ---------------------------------------------------------
 macos-titlebar-style = transparent
 
-# Espaçamento interno (a janela "respira")
+# Inner padding (the window "breathes")
 window-padding-x = 14
 window-padding-y = 12
 window-padding-balance = true
 window-padding-color = extend
 
-# Option vira Alt (⌥ funciona pra atalhos de terminal)
+# Option becomes Alt (⌥ works for terminal shortcuts)
 macos-option-as-alt = true
 
-# Esconde o mouse enquanto você digita
+# Hide the mouse pointer while typing
 mouse-hide-while-typing = true
 
-# Nova aba/janela abre no mesmo diretório
+# New tab/window opens in the same directory
 window-inherit-working-directory = true
 
 # ---------------------------------------------------------
-# COMPORTAMENTO
+# BEHAVIOR
 # ---------------------------------------------------------
-# Seleção com o mouse já copia pro clipboard
+# Mouse selection copies straight to the clipboard
 copy-on-select = clipboard
 
-# Scroll fino, estilo página web: trackpad já é 1:1 (precision); roda de
-# mouse física por padrão scrollava 3 linhas por tick (discrete:3) — vira 1.
+# Fine, web-page-like scrolling: the trackpad is already 1:1 (precision);
+# a physical mouse wheel scrolled 3 lines per tick by default — now 1.
 mouse-scroll-multiplier = precision:1,discrete:1
 
 # ---------------------------------------------------------
-# QUICK TERMINAL (dropdown global, estilo iTerm/Yakuake)
+# QUICK TERMINAL (global dropdown, iTerm/Yakuake style)
 # ---------------------------------------------------------
-# Aparece deslizando do topo em cima de qualquer app.
+# Slides down from the top, over any app.
 quick-terminal-position = top
 quick-terminal-animation-duration = 0.12
-# Atalho global: ⌘ + ` (crase). Precisa de permissão de Acessibilidade
-# (macOS pede na 1ª vez: Ajustes > Privacidade > Acessibilidade > Ghostty).
+# Global shortcut: ⌘ + ` (backtick). Needs Accessibility permission
+# (macOS asks on first use: Settings > Privacy > Accessibility > Ghostty).
 keybind = global:cmd+grave_accent=toggle_quick_terminal
 
 # ---------------------------------------------------------
-# ATALHOS EXTRA
+# EXTRA SHORTCUTS
 # ---------------------------------------------------------
-# Splits, abas e navegação já vêm por padrão:
-#   ⌘D split direita · ⌘⇧D split abaixo · ⌘[ / ⌘] navega
-#   ⌘⇧Enter zoom · ⌘⌃setas redimensiona · ⌘T nova aba
-# Recarregar config: ⌘⇧,   ·   Aumentar/diminuir fonte: ⌘+ / ⌘-
+# Splits, tabs and navigation ship by default:
+#   ⌘D split right · ⌘⇧D split below · ⌘[ / ⌘] navigate
+#   ⌘⇧Enter zoom · ⌘⌃arrows resize · ⌘T new tab
+# Reload config: ⌘⇧,   ·   Font size up/down: ⌘+ / ⌘-

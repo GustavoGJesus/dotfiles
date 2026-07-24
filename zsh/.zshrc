@@ -1,31 +1,30 @@
 # ============================================================
-#  ~/.zshrc  —  configurado por Claude Code
-#  Backup do anterior: ~/.zshrc.bak
+#  ~/.zshrc
 # ============================================================
 
 # ---- PATH ----
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="/Users/gustavogomes/.antigravity/antigravity/bin:$PATH"           # Antigravity
-export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"            # Docker
-export PATH="/Users/gustavogomes/.antigravity-ide/antigravity-ide/bin:$PATH"  # Antigravity IDE
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"               # Antigravity
+export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"  # Docker
+export PATH="$HOME/.antigravity-ide/antigravity-ide/bin:$PATH"       # Antigravity IDE
 
 # ============================================================
-#  Histórico (grande, compartilhado, sem duplicados)
+#  History (large, shared, no duplicates)
 # ============================================================
 HISTFILE="$HOME/.zsh_history"
 HISTSIZE=100000
 SAVEHIST=100000
-setopt SHARE_HISTORY          # compartilha entre abas em tempo real
-setopt HIST_IGNORE_ALL_DUPS   # não guarda comandos duplicados
-setopt HIST_IGNORE_SPACE      # comando iniciado com espaço não é salvo
+setopt SHARE_HISTORY          # share across tabs in real time
+setopt HIST_IGNORE_ALL_DUPS   # never store duplicated commands
+setopt HIST_IGNORE_SPACE      # commands starting with a space are not saved
 setopt HIST_REDUCE_BLANKS
 setopt INC_APPEND_HISTORY
 
 # ============================================================
-#  Completions (case-insensitive, com menu e cores)
+#  Completions (case-insensitive, with menu and colors)
 # ============================================================
-fpath=("$HOME/dotfiles/zsh/completions" $fpath)   # completions do herdr etc.
-# compinit com cache: só re-escaneia 1x por dia (mais rápido)
+fpath=("$HOME/dotfiles/zsh/completions" $fpath)   # herdr completions etc.
+# cached compinit: full re-scan at most once a day (faster startup)
 autoload -Uz compinit
 if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh-24) ]]; then
   compinit -C
@@ -39,21 +38,21 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 # ============================================================
 #  Plugins (Homebrew)
 # ============================================================
-# Sugestão fantasma vinda do histórico (aperte → para aceitar)
+# Ghost suggestion pulled from history (press → to accept)
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#565f89'   # cinza azulado (Tokyo Night)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#565f89'   # blue-gray (Tokyo Night)
 
-# Realce de sintaxe — DEVE ser a última fonte da lista
+# Syntax highlighting — MUST be the last thing sourced
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # ============================================================
-#  Ferramentas
+#  Tools
 # ============================================================
 eval "$(starship init zsh)"   # prompt
-eval "$(zoxide init zsh)"     # cd inteligente: use `z <pasta>`
-source <(fzf --zsh)           # busca fuzzy: Ctrl+R hist / Ctrl+T arquivos / Alt+C cd
+eval "$(zoxide init zsh)"     # smart cd: use `z <folder>`
+source <(fzf --zsh)           # fuzzy search: Ctrl+R history / Ctrl+T files / Alt+C cd
 
-# fzf usando fd + cores Tokyo Night
+# fzf powered by fd + Tokyo Night colors
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
@@ -64,54 +63,54 @@ export FZF_DEFAULT_OPTS="--height 45% --layout=reverse --border=rounded \
 # ============================================================
 #  Aliases
 # ============================================================
-# ls -> eza (com ícones; precisa de Nerd Font, que você já tem)
+# ls -> eza (with icons; requires a Nerd Font)
 alias ls='eza --icons --group-directories-first'
 alias ll='eza -lah --icons --group-directories-first --git'
 alias la='eza -a  --icons --group-directories-first'
 alias lt='eza --tree --level=2 --icons --group-directories-first'
 alias tree='eza --tree --icons'
 
-# cat -> bat (mantém comportamento de pipe automaticamente)
+# cat -> bat (pipe behavior is preserved automatically)
 alias cat='bat --paging=never'
 alias less='bat'
 
-# atalhos úteis
+# handy shortcuts
 alias lg='lazygit'
 alias v='nvim'
-alias reload='source ~/.zshrc && echo "zsh recarregado ✔"'
+alias reload='source ~/.zshrc && echo "zsh reloaded ✔"'
 alias zshrc='${EDITOR:-nvim} ~/.zshrc'
 alias ghosttyrc='${EDITOR:-nvim} "$HOME/Library/Application Support/com.mitchellh.ghostty/config"'
 
-# git rápido
+# quick git
 alias gs='git status -sb'
 alias gd='git diff'
 alias gl='git log --oneline --graph --decorate -20'
 
-# Nota: `fd` (find moderno) e `rg` (ripgrep) ficam como comandos próprios,
-# sem alias, pra não quebrar scripts que esperam o find/grep tradicionais.
+# Note: `fd` (modern find) and `rg` (ripgrep) stay unaliased so scripts
+# that expect the traditional find/grep keep working.
 
 export EDITOR='nvim'
 
-# Claude Code: scroll do chat na granularidade mínima — 1 linha por evento
-# de wheel (o mais próximo de "página web" que um TUI permite; a aceleração
-# já está desligada via wheelScrollAccelerationEnabled=false no settings.json).
-# Aceita decimais até 20 — se achar lento, suba pra 1.5 ou 2.
+# Claude Code: chat scrolling at the finest granularity — 1 line per wheel
+# event (as close to a web page as a TUI gets; acceleration is already off
+# via wheelScrollAccelerationEnabled=false in settings.json).
+# Accepts decimals up to 20 — bump to 1.5 or 2 if it feels slow.
 export CLAUDE_CODE_SCROLL_SPEED=1
 
-# Claude Code: FORÇA mouse-tracking ligado (env tri-state: "false" = forçar
-# modo full; não confundir com o antigo =1 que DESLIGAVA). Necessário com
-# tui=fullscreen dentro do herdr: sem mouse ativo, o alternate-scroll do
-# herdr converte a roda em setas ↑/↓ e o scroll vira navegação de histórico
-# de comandos no input em vez de scrollar o chat.
+# Claude Code: FORCE mouse-tracking on (tri-state env: "false" = force full
+# mode; not to be confused with =1, which DISABLES it). Required with
+# tui=fullscreen inside herdr: without an active mouse, herdr's
+# alternate-scroll turns the wheel into ↑/↓ arrows and scrolling becomes
+# prompt-history navigation in the input instead of scrolling the chat.
 export CLAUDE_CODE_DISABLE_MOUSE=false
 
-# Herdr: se o server foi iniciado de dentro do Warp, os panes herdam o
-# ambiente COMPLETO do Warp (TERM_PROGRAM=WarpTerminal + envs WARP_*).
-# Efeito: o Claude Code ativa modo Warp e o plugin claude-code-warp emite
-# sequências do protocolo do Warp direto no emulador do herdr, que não as
-# entende → "vibração"/scroll fantasma ao mover o mouse nos panes.
-# Este guard normaliza o env do pane. Regra de ouro: inicie o herdr
-# SEMPRE a partir do Ghostty (nunca do Warp).
+# Herdr: if the server was started from inside Warp, panes inherit Warp's
+# FULL environment (TERM_PROGRAM=WarpTerminal + WARP_* vars). Effect:
+# Claude Code switches to Warp mode and the claude-code-warp plugin emits
+# Warp protocol sequences straight into herdr's emulator, which doesn't
+# understand them → jitter/ghost scrolling when moving the mouse over panes.
+# This guard normalizes the pane env. Golden rule: ALWAYS start herdr
+# from Ghostty (never from Warp).
 if [[ "${HERDR_ENV:-}" == "1" && "${TERM_PROGRAM:-}" == "WarpTerminal" ]]; then
   export TERM_PROGRAM=ghostty
   unset TERM_PROGRAM_VERSION

@@ -1,12 +1,12 @@
-# ~/.zprofile — roda 1x por login shell (cada pane novo no macOS)
-# Mantido enxuto: cada item aqui atrasa a abertura de TODO terminal.
+# ~/.zprofile — runs once per login shell (every new pane on macOS)
+# Kept lean: every item here delays the opening of EVERY terminal.
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # ============================================================
-#  nvm LAZY (economiza ~500-700ms por shell)
-#  O node default entra no PATH direto, sem carregar o nvm.
-#  O nvm de verdade só carrega na primeira vez que você digitar `nvm`.
+#  LAZY nvm (saves ~500-700ms per shell)
+#  The default node goes straight into PATH without loading nvm.
+#  The real nvm only loads the first time you type `nvm`.
 # ============================================================
 export NVM_DIR="$HOME/.nvm"
 if [ -r "$NVM_DIR/alias/default" ]; then

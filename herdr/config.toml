@@ -1,45 +1,45 @@
-# herdr — configuração (fonte da verdade: ~/dotfiles/herdr/config.toml)
-# Recarregar sem reiniciar:  herdr server reload-config
+# herdr — configuration (source of truth: ~/dotfiles/herdr/config.toml)
+# Reload without restarting:  herdr server reload-config
 
 onboarding = false
 
 [theme]
-# Mesmo tema do Ghostty/Starship/lazygit — tudo Tokyo Night
+# Same theme as Ghostty/Starship/lazygit — Tokyo Night everywhere
 name = "tokyo-night"
 
 [terminal]
-# Panes novos herdam o diretório do pane atual (bom pra abrir split no mesmo projeto)
+# New panes inherit the current pane's directory (great for splits in the same project)
 new_cwd = "follow"
 
 [update]
 channel = "stable"
 
 [ui]
-# true = Herdr captura o mouse: cliques na sidebar/tabs/panes funcionam
-# (um dos diferenciais da ferramenta).
-# Histórico (23/jul/2026): a "vibração"/scroll fantasma ao mover o mouse em
-# panes com Claude tinha como causa provável o env herdado errado — o server
-# do herdr foi iniciado de dentro do WARP, então os panes carregavam
-# TERM_PROGRAM=WarpTerminal e o Claude Code ativava modo Warp dentro do
-# herdr/Ghostty. Guard no ~/.zshrc normaliza o env; e SEMPRE inicie o
-# herdr a partir do Ghostty (nunca do Warp).
+# true = Herdr captures the mouse: sidebar/tab/pane clicks work
+# (one of the tool's best features).
+# History (Jul 2026): jitter/ghost scrolling when moving the mouse over
+# Claude panes was caused by a stale inherited environment — the herdr
+# server had been started from inside WARP, so panes carried
+# TERM_PROGRAM=WarpTerminal and Claude Code switched to Warp mode inside
+# herdr/Ghostty. A guard in ~/.zshrc normalizes the env; and ALWAYS start
+# herdr from Ghostty (never from Warp).
 mouse_capture = true
 
-# Scroll fino nos panes: 1 linha por tick de scroll (estilo página web,
-# em conjunto com CLAUDE_CODE_SCROLL_SPEED=1 no zshrc e o multiplier do
-# Ghostty). Se o scrollback de shells ficar lento, suba pra 2.
+# Fine scrolling in panes: 1 line per scroll tick (web-page feel, paired
+# with CLAUDE_CODE_SCROLL_SPEED=1 in zshrc and Ghostty's multiplier).
+# Bump to 2 if shell scrollback feels slow.
 mouse_scroll_lines = 1
 
-# Notificação nativa do macOS quando um agente em workspace de fundo
-# termina ou fica esperando você (sons já vêm ligados por padrão)
+# Native macOS notification when an agent in a background workspace
+# finishes or is waiting for you (sounds are on by default)
 [ui.toast]
 delivery = "system"
 
 # ============================================================
-#  Atalhos custom (prefix padrão: ctrl+b)
+#  Custom keybindings (default prefix: ctrl+b)
 # ============================================================
 
-# lazygit em popup modal — ctrl+b, alt+g
+# lazygit in a modal popup — ctrl+b, alt+g
 [[keys.command]]
 key = "prefix+alt+g"
 type = "popup"
@@ -47,19 +47,19 @@ command = "lazygit"
 width = "85%"
 height = "85%"
 
-# reviewr: sidebar de review dos diffs do agente — ctrl+b, alt+r
+# reviewr: agent diff review sidebar — ctrl+b, alt+r
 [[keys.command]]
 key = "prefix+alt+r"
 type = "shell"
 command = "herdr plugin action invoke persiyanov.reviewr.toggle"
 
-# file-viewer: árvore de arquivos + diffs — ctrl+b, alt+f
+# file-viewer: file tree + diffs — ctrl+b, alt+f
 [[keys.command]]
 key = "prefix+alt+f"
 type = "shell"
 command = "herdr plugin pane open --plugin herdr-file-viewer --entrypoint file-viewer"
 
-# Linear: escolher issue → cria worktree + workspace — ctrl+b, alt+l
+# Linear: pick an issue → creates worktree + workspace — ctrl+b, alt+l
 [[keys.command]]
 key = "prefix+alt+l"
 type = "shell"

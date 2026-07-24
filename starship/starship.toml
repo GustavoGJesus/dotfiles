@@ -1,10 +1,10 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 # ============================================================
-#  Prompt limpo, 1 linha (inspirado no 0xDones)
-#  Layout:   pasta  branch status  linguagens  ❯
-#  - diretório em ciano; a RAIZ do repo git em verde (assinatura dele)
-#  - sem powerline, sem fundo, sem degradê
+#  Clean one-line prompt (inspired by 0xDones)
+#  Layout:   folder  branch status  languages  ❯
+#  - directory in cyan; the git repo ROOT in green (its signature touch)
+#  - no powerline, no backgrounds, no gradients
 # ============================================================
 
 format = """
@@ -17,17 +17,17 @@ $nodejs$bun$python$rust$golang\
 $cmd_duration\
 $character"""
 
-add_newline = true          # linha em branco antes de cada prompt (respiro)
+add_newline = true          # blank line before each prompt (breathing room)
 command_timeout = 2000
 
-# ---- Ícone da Apple (discreto, cinza) ----
+# ---- Apple icon (subtle, gray) ----
 [os]
 disabled = false
 format = "[$symbol ](fg:#565f89)"
 [os.symbols]
 Macos = ""
 
-# ---- Pasta: caminho em ciano, raiz do repo em VERDE ----
+# ---- Directory: path in cyan, repo root in GREEN ----
 [directory]
 style = "cyan bold"
 repo_root_style = "green bold"
@@ -38,23 +38,23 @@ read_only_style = "red"
 truncation_length = 3
 truncation_symbol = "…/"
 
-# ---- Git branch (roxo suave) ----
+# ---- Git branch (soft purple) ----
 [git_branch]
 symbol = " "
 style = "purple"
 format = "[$symbol$branch]($style) "
 
-# ---- Git status (amarelo, só quando há mudança) ----
+# ---- Git status (yellow, only when something changed) ----
 [git_status]
 style = "yellow"
 format = "([$all_status$ahead_behind]($style) )"
 
-# ---- Git state (rebase/merge/cherry-pick em andamento) ----
+# ---- Git state (rebase/merge/cherry-pick in progress) ----
 [git_state]
 style = "bright-red"
 format = '\([$state( $progress_current/$progress_total)]($style)\) '
 
-# ---- Linguagens (discretas, cinza) ----
+# ---- Languages (subtle, gray) ----
 [nodejs]
 symbol = " "
 style = "fg:#565f89"
@@ -76,13 +76,13 @@ symbol = " "
 style = "fg:#565f89"
 format = "[$symbol$version]($style) "
 
-# ---- Duração de comandos longos (só acima de 2s) ----
+# ---- Long command duration (only above 2s) ----
 [cmd_duration]
 min_time = 2000
 style = "fg:#565f89"
 format = "[ $duration]($style) "
 
-# ---- Caractere do prompt (verde ok / vermelho erro) ----
+# ---- Prompt character (green ok / red error) ----
 [character]
 success_symbol = "[❯](green bold)"
 error_symbol = "[❯](red bold)"
