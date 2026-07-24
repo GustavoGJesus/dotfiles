@@ -21,6 +21,7 @@ brew "git-delta"
 # Git & workflow
 brew "gh"
 brew "lazygit"
+brew "jq"         # JSON processor (used by the Claude statusline)
 
 # Node toolchain
 brew "fnm"        # fast Node version manager (auto-switches on cd)
