@@ -12,6 +12,11 @@
 #   ghostty +list-themes   (live preview in the terminal)
 theme = TokyoNight Night
 
+# Default text in pure white — Tokyo Night's stock foreground (#c0caf5)
+# reads bluish; this override wins over the theme's foreground and is what
+# actually paints unstyled text everywhere (shell, Claude Code chat body).
+foreground = #ffffff
+
 # ---------------------------------------------------------
 # FONT
 # ---------------------------------------------------------
