@@ -92,8 +92,9 @@ alias gl='git log --oneline --graph --decorate -20'
 
 export EDITOR='nvim'
 
-# Claude Code: desliga o mouse-tracking do TUI (corrige "vibração"/scroll
-# fantasma ao passar o mouse sobre o chat dentro do Herdr/Ghostty).
-# Precisa estar no ambiente do PROCESSO — o bloco env do settings.json
-# não chega a tempo da inicialização do TUI.
+# Claude Code: desliga o mouse-tracking do TUI.
+# Obs (23/jul/2026): a "vibração"/scroll fantasma ao mover o mouse nos panes
+# era do mouse_capture do Herdr (desligado em ~/dotfiles/herdr/config.toml),
+# não do Claude — esta env fica como garantia de que o TUI não pede
+# mouse-tracking ao terminal. Precisa estar no ambiente do PROCESSO.
 export CLAUDE_CODE_DISABLE_MOUSE=1

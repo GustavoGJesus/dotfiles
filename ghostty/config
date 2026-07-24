@@ -73,9 +73,6 @@ window-inherit-working-directory = true
 # Seleção com o mouse já copia pro clipboard
 copy-on-select = clipboard
 
-# Histórico de scroll bem grande
-scrollback-limit = 10000000
-
 # ---------------------------------------------------------
 # QUICK TERMINAL (dropdown global, estilo iTerm/Yakuake)
 # ---------------------------------------------------------

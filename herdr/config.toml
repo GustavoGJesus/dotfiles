@@ -15,16 +15,14 @@ new_cwd = "follow"
 channel = "stable"
 
 [ui]
-# Mouse capturado pelo Herdr: cliques na sidebar/tabs funcionam.
-# A "vibração" ao passar o mouse em panes com Claude era o mouse-tracking
-# do PRÓPRIO Claude Code — resolvida com CLAUDE_CODE_DISABLE_MOUSE=1
-# no env de ~/.claude/settings.json (não mexer aqui).
-mouse_capture = true
-
-# Agentes que precisam de atenção sobem pro topo da sidebar
-agent_panel_sort = "priority"
-# Mostra qual agente roda em cada pane (útil com vários splits)
-show_agent_labels_on_pane_borders = true
+# false = o Herdr NÃO captura o mouse do terminal.
+# Motivo (23/jul/2026): com true, mover o cursor sobre um pane com Claude Code
+# fazia o conteúdo "vibrar" (scroll fantasma subindo/descendo). O bug é do
+# repasse de mouse do Herdr 0.7.5, NÃO do Claude Code — o Claude já rodava
+# com CLAUDE_CODE_DISABLE_MOUSE=1 (mouse-tracking off) e vibrava mesmo assim.
+# Custo: cliques na sidebar/tabs não funcionam; navegue pelo teclado
+# (prefix ctrl+b). Se uma versão nova do herdr corrigir, dá pra testar true.
+mouse_capture = false
 
 # Notificação nativa do macOS quando um agente em workspace de fundo
 # termina ou fica esperando você (sons já vêm ligados por padrão)
