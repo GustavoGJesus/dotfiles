@@ -25,6 +25,11 @@ channel = "stable"
 # herdr a partir do Ghostty (nunca do Warp).
 mouse_capture = true
 
+# Scroll fino nos panes: 1 linha por tick de scroll (estilo página web,
+# em conjunto com CLAUDE_CODE_SCROLL_SPEED=1 no zshrc e o multiplier do
+# Ghostty). Se o scrollback de shells ficar lento, suba pra 2.
+mouse_scroll_lines = 1
+
 # Notificação nativa do macOS quando um agente em workspace de fundo
 # termina ou fica esperando você (sons já vêm ligados por padrão)
 [ui.toast]

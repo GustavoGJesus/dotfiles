@@ -92,6 +92,12 @@ alias gl='git log --oneline --graph --decorate -20'
 
 export EDITOR='nvim'
 
+# Claude Code: scroll do chat na granularidade mínima — 1 linha por evento
+# de wheel (o mais próximo de "página web" que um TUI permite; a aceleração
+# já está desligada via wheelScrollAccelerationEnabled=false no settings.json).
+# Aceita decimais até 20 — se achar lento, suba pra 1.5 ou 2.
+export CLAUDE_CODE_SCROLL_SPEED=1
+
 # Herdr: se o server foi iniciado de dentro do Warp, os panes herdam o
 # ambiente COMPLETO do Warp (TERM_PROGRAM=WarpTerminal + envs WARP_*).
 # Efeito: o Claude Code ativa modo Warp e o plugin claude-code-warp emite

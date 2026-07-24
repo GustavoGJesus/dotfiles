@@ -73,6 +73,10 @@ window-inherit-working-directory = true
 # Seleção com o mouse já copia pro clipboard
 copy-on-select = clipboard
 
+# Scroll fino, estilo página web: trackpad já é 1:1 (precision); roda de
+# mouse física por padrão scrollava 3 linhas por tick (discrete:3) — vira 1.
+mouse-scroll-multiplier = precision:1,discrete:1
+
 # ---------------------------------------------------------
 # QUICK TERMINAL (dropdown global, estilo iTerm/Yakuake)
 # ---------------------------------------------------------
