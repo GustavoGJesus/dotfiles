@@ -15,11 +15,10 @@ new_cwd = "follow"
 channel = "stable"
 
 [ui]
-# Mouse fica com o Ghostty (nativo): corrige a "vibração" do conteúdo
-# ao passar o mouse sobre panes com Claude/TUI rodando.
-# Trade-off: cliques na UI do Herdr (sidebar/tabs) param de funcionar —
-# navegação é pelo teclado (prefix+w, prefix+1..9). Reverter: true.
-mouse_capture = false
+# Mouse capturado pelo Herdr: cliques na sidebar/tabs funcionam.
+# Efeito colateral conhecido: leve "vibração" ao passar o mouse sobre
+# panes com Claude/TUI rodando (cosmético; false resolve mas mata os cliques).
+mouse_capture = true
 
 # Agentes que precisam de atenção sobem pro topo da sidebar
 agent_panel_sort = "priority"
