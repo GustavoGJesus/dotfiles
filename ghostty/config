@@ -1,0 +1,95 @@
+# =========================================================
+# Ghostty — configuração visual
+# Path: ~/Library/Application Support/com.mitchellh.ghostty/config
+# Docs: https://ghostty.org/docs/config  (todas as opções)
+# Recarregar sem fechar: Cmd+Shift+, (reload config)
+# =========================================================
+
+# ---------------------------------------------------------
+# TEMA
+# ---------------------------------------------------------
+# Tokyo Night (fundo #1a1b26). Troque por qualquer um de:
+#   ghostty +list-themes   (preview ao vivo no terminal)
+theme = TokyoNight Night
+
+# ---------------------------------------------------------
+# FONTE
+# ---------------------------------------------------------
+font-family = JetBrainsMono Nerd Font Mono
+font-size = 14
+
+# Deixa o texto mais nítido/encorpado no macOS (Retina)
+font-thicken = true
+
+# Respiro vertical entre as linhas (conforto de leitura)
+adjust-cell-height = 10%
+
+# Ligatures (=>  ===  !=  ->) já vêm LIGADAS por padrão.
+# Para DESLIGAR, descomente a linha abaixo:
+# font-feature = -calt, -liga, -dlig
+
+# ---------------------------------------------------------
+# CORES / TRANSPARÊNCIA
+# ---------------------------------------------------------
+# Cores mais vivas em telas Apple (P3)
+window-colorspace = display-p3
+
+# Vidro fosco moderno: transparência + blur
+background-opacity = 0.92
+background-blur = 20
+
+# Splits sem foco ficam levemente apagados (ajuda a focar)
+unfocused-split-opacity = 0.85
+
+# ---------------------------------------------------------
+# CURSOR
+# ---------------------------------------------------------
+cursor-style = bar
+cursor-style-blink = true
+
+# ---------------------------------------------------------
+# JANELA / macOS
+# ---------------------------------------------------------
+macos-titlebar-style = transparent
+
+# Espaçamento interno (a janela "respira")
+window-padding-x = 14
+window-padding-y = 12
+window-padding-balance = true
+window-padding-color = extend
+
+# Option vira Alt (⌥ funciona pra atalhos de terminal)
+macos-option-as-alt = true
+
+# Esconde o mouse enquanto você digita
+mouse-hide-while-typing = true
+
+# Nova aba/janela abre no mesmo diretório
+window-inherit-working-directory = true
+
+# ---------------------------------------------------------
+# COMPORTAMENTO
+# ---------------------------------------------------------
+# Seleção com o mouse já copia pro clipboard
+copy-on-select = clipboard
+
+# Histórico de scroll bem grande
+scrollback-limit = 10000000
+
+# ---------------------------------------------------------
+# QUICK TERMINAL (dropdown global, estilo iTerm/Yakuake)
+# ---------------------------------------------------------
+# Aparece deslizando do topo em cima de qualquer app.
+quick-terminal-position = top
+quick-terminal-animation-duration = 0.12
+# Atalho global: ⌘ + ` (crase). Precisa de permissão de Acessibilidade
+# (macOS pede na 1ª vez: Ajustes > Privacidade > Acessibilidade > Ghostty).
+keybind = global:cmd+grave_accent=toggle_quick_terminal
+
+# ---------------------------------------------------------
+# ATALHOS EXTRA
+# ---------------------------------------------------------
+# Splits, abas e navegação já vêm por padrão:
+#   ⌘D split direita · ⌘⇧D split abaixo · ⌘[ / ⌘] navega
+#   ⌘⇧Enter zoom · ⌘⌃setas redimensiona · ⌘T nova aba
+# Recarregar config: ⌘⇧,   ·   Aumentar/diminuir fonte: ⌘+ / ⌘-

@@ -1,0 +1,21 @@
+[user]
+	name = GustavoGJesus
+	email = gustavogomesdev@proton.me
+[core]
+	pager = delta
+[interactive]
+	diffFilter = delta --color-only
+[delta]
+	navigate = true
+	line-numbers = true
+	hyperlinks = true
+	file-style = "#7aa2f7"
+	file-decoration-style = "#7aa2f7 ul"
+	line-numbers-minus-style = "#f7768e"
+	line-numbers-plus-style = "#9ece6a"
+	line-numbers-zero-style = "#3b4261"
+	hunk-header-decoration-style = "#3b4261"
+[merge]
+	conflictstyle = zdiff3
+[diff]
+	colorMoved = default

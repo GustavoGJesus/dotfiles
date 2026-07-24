@@ -1,0 +1,94 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+# ============================================================
+#  Prompt limpo (sem powerline / sem fundo / poucas cores)
+#  Layout:
+#     pasta  branch  status   linguagens          hora
+#   ❯
+# ============================================================
+
+format = """
+$os\
+$directory\
+$git_branch\
+$git_status\
+$nodejs$bun$python$rust$golang\
+$cmd_duration\
+$fill\
+$time\
+$line_break\
+$character"""
+
+add_newline = true
+
+# ---- Ícone da Apple (discreto, cinza) ----
+[os]
+disabled = false
+format = "[$symbol ](fg:#565f89)"
+[os.symbols]
+Macos = ""
+
+# ---- Pasta (o destaque: azul) ----
+[directory]
+style = "fg:#7aa2f7 bold"
+format = "[$path ]($style)"
+truncation_length = 3
+truncation_symbol = "…/"
+read_only = "  "
+read_only_style = "fg:#f7768e"
+
+# ---- Git branch (roxo suave) ----
+[git_branch]
+symbol = " "
+style = "fg:#bb9af7"
+format = "[$symbol$branch ]($style)"
+
+# ---- Git status (amarelo suave, só quando há mudança) ----
+[git_status]
+style = "fg:#e0af68"
+format = "([$all_status$ahead_behind]($style) )"
+
+# ---- Linguagens (bem discretas, cinza) ----
+[nodejs]
+symbol = " "
+style = "fg:#565f89"
+format = "[$symbol$version ]($style)"
+[bun]
+symbol = " "
+style = "fg:#565f89"
+format = "[$symbol$version ]($style)"
+[python]
+symbol = " "
+style = "fg:#565f89"
+format = "[$symbol$version ]($style)"
+[rust]
+symbol = " "
+style = "fg:#565f89"
+format = "[$symbol$version ]($style)"
+[golang]
+symbol = " "
+style = "fg:#565f89"
+format = "[$symbol$version ]($style)"
+
+# ---- Duração de comandos longos (só acima de 2s) ----
+[cmd_duration]
+min_time = 2000
+style = "fg:#565f89"
+format = "[ $duration ]($style)"
+
+# ---- Empurra a hora pra direita ----
+[fill]
+symbol = " "
+
+# ---- Hora (canto direito, cinza) ----
+[time]
+disabled = false
+time_format = "%R"
+style = "fg:#565f89"
+format = "[$time]($style)"
+
+# ---- Caractere do prompt (verde ok / vermelho erro) ----
+[character]
+success_symbol = "[❯](fg:#9ece6a bold)"
+error_symbol = "[❯](fg:#f7768e bold)"
+vimcmd_symbol = "[❮](fg:#7dcfff bold)"
