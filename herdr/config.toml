@@ -15,14 +15,15 @@ new_cwd = "follow"
 channel = "stable"
 
 [ui]
-# false = o Herdr NÃO captura o mouse do terminal.
-# Motivo (23/jul/2026): com true, mover o cursor sobre um pane com Claude Code
-# fazia o conteúdo "vibrar" (scroll fantasma subindo/descendo). O bug é do
-# repasse de mouse do Herdr 0.7.5, NÃO do Claude Code — o Claude já rodava
-# com CLAUDE_CODE_DISABLE_MOUSE=1 (mouse-tracking off) e vibrava mesmo assim.
-# Custo: cliques na sidebar/tabs não funcionam; navegue pelo teclado
-# (prefix ctrl+b). Se uma versão nova do herdr corrigir, dá pra testar true.
-mouse_capture = false
+# true = Herdr captura o mouse: cliques na sidebar/tabs/panes funcionam
+# (um dos diferenciais da ferramenta).
+# Histórico (23/jul/2026): a "vibração"/scroll fantasma ao mover o mouse em
+# panes com Claude tinha como causa provável o env herdado errado — o server
+# do herdr foi iniciado de dentro do WARP, então os panes carregavam
+# TERM_PROGRAM=WarpTerminal e o Claude Code ativava modo Warp dentro do
+# herdr/Ghostty. Guard no ~/.zshrc normaliza o env; e SEMPRE inicie o
+# herdr a partir do Ghostty (nunca do Warp).
+mouse_capture = true
 
 # Notificação nativa do macOS quando um agente em workspace de fundo
 # termina ou fica esperando você (sons já vêm ligados por padrão)

@@ -92,9 +92,15 @@ alias gl='git log --oneline --graph --decorate -20'
 
 export EDITOR='nvim'
 
-# Claude Code: desliga o mouse-tracking do TUI.
-# Obs (23/jul/2026): a "vibração"/scroll fantasma ao mover o mouse nos panes
-# era do mouse_capture do Herdr (desligado em ~/dotfiles/herdr/config.toml),
-# não do Claude — esta env fica como garantia de que o TUI não pede
-# mouse-tracking ao terminal. Precisa estar no ambiente do PROCESSO.
-export CLAUDE_CODE_DISABLE_MOUSE=1
+# Herdr: se o server foi iniciado de dentro do Warp, os panes herdam o
+# ambiente COMPLETO do Warp (TERM_PROGRAM=WarpTerminal + envs WARP_*).
+# Efeito: o Claude Code ativa modo Warp e o plugin claude-code-warp emite
+# sequências do protocolo do Warp direto no emulador do herdr, que não as
+# entende → "vibração"/scroll fantasma ao mover o mouse nos panes.
+# Este guard normaliza o env do pane. Regra de ouro: inicie o herdr
+# SEMPRE a partir do Ghostty (nunca do Warp).
+if [[ "${HERDR_ENV:-}" == "1" && "${TERM_PROGRAM:-}" == "WarpTerminal" ]]; then
+  export TERM_PROGRAM=ghostty
+  unset TERM_PROGRAM_VERSION
+  unset -m 'WARP_*' 2>/dev/null
+fi
