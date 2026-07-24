@@ -13,3 +13,44 @@ new_cwd = "follow"
 
 [update]
 channel = "stable"
+
+[ui]
+# Agentes que precisam de atenção sobem pro topo da sidebar
+agent_panel_sort = "priority"
+# Mostra qual agente roda em cada pane (útil com vários splits)
+show_agent_labels_on_pane_borders = true
+
+# Notificação nativa do macOS quando um agente em workspace de fundo
+# termina ou fica esperando você (sons já vêm ligados por padrão)
+[ui.toast]
+delivery = "system"
+
+# ============================================================
+#  Atalhos custom (prefix padrão: ctrl+b)
+# ============================================================
+
+# lazygit em popup modal — ctrl+b, alt+g
+[[keys.command]]
+key = "prefix+alt+g"
+type = "popup"
+command = "lazygit"
+width = "85%"
+height = "85%"
+
+# reviewr: sidebar de review dos diffs do agente — ctrl+b, alt+r
+[[keys.command]]
+key = "prefix+alt+r"
+type = "shell"
+command = "herdr plugin action invoke persiyanov.reviewr.toggle"
+
+# file-viewer: árvore de arquivos + diffs — ctrl+b, alt+f
+[[keys.command]]
+key = "prefix+alt+f"
+type = "shell"
+command = "herdr plugin pane open --plugin herdr-file-viewer --entrypoint file-viewer"
+
+# Linear: escolher issue → cria worktree + workspace — ctrl+b, alt+l
+[[keys.command]]
+key = "prefix+alt+l"
+type = "shell"
+command = "herdr plugin action invoke tdi.worktree-from-linear.pick"
