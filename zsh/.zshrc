@@ -98,6 +98,13 @@ export EDITOR='nvim'
 # Aceita decimais até 20 — se achar lento, suba pra 1.5 ou 2.
 export CLAUDE_CODE_SCROLL_SPEED=1
 
+# Claude Code: FORÇA mouse-tracking ligado (env tri-state: "false" = forçar
+# modo full; não confundir com o antigo =1 que DESLIGAVA). Necessário com
+# tui=fullscreen dentro do herdr: sem mouse ativo, o alternate-scroll do
+# herdr converte a roda em setas ↑/↓ e o scroll vira navegação de histórico
+# de comandos no input em vez de scrollar o chat.
+export CLAUDE_CODE_DISABLE_MOUSE=false
+
 # Herdr: se o server foi iniciado de dentro do Warp, os panes herdam o
 # ambiente COMPLETO do Warp (TERM_PROGRAM=WarpTerminal + envs WARP_*).
 # Efeito: o Claude Code ativa modo Warp e o plugin claude-code-warp emite
