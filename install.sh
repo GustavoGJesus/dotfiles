@@ -29,6 +29,7 @@ lazygit/config.yml|$HOME/Library/Application Support/lazygit/config.yml
 herdr/config.toml|$HOME/.config/herdr/config.toml
 claude/themes/tokyo-night.json|$HOME/.claude/themes/tokyo-night.json
 claude/statusline.sh|$HOME/.claude/statusline.sh
+claude/CLAUDE.md|$HOME/.claude/CLAUDE.md
 "
 
 link() {
