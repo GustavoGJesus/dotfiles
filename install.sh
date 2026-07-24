@@ -19,6 +19,7 @@ git/.gitconfig|$HOME/.gitconfig
 starship/starship.toml|$HOME/.config/starship.toml
 ghostty/config|$HOME/Library/Application Support/com.mitchellh.ghostty/config
 lazygit/config.yml|$HOME/Library/Application Support/lazygit/config.yml
+herdr/config.toml|$HOME/.config/herdr/config.toml
 "
 
 link() {

@@ -1,0 +1,15 @@
+# herdr — configuração (fonte da verdade: ~/dotfiles/herdr/config.toml)
+# Recarregar sem reiniciar:  herdr server reload-config
+
+onboarding = false
+
+[theme]
+# Mesmo tema do Ghostty/Starship/lazygit — tudo Tokyo Night
+name = "tokyo-night"
+
+[terminal]
+# Panes novos herdam o diretório do pane atual (bom pra abrir split no mesmo projeto)
+new_cwd = "follow"
+
+[update]
+channel = "stable"

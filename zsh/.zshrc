@@ -24,7 +24,14 @@ setopt INC_APPEND_HISTORY
 # ============================================================
 #  Completions (case-insensitive, com menu e cores)
 # ============================================================
-autoload -Uz compinit && compinit
+fpath=("$HOME/dotfiles/zsh/completions" $fpath)   # completions do herdr etc.
+# compinit com cache: só re-escaneia 1x por dia (mais rápido)
+autoload -Uz compinit
+if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh-24) ]]; then
+  compinit -C
+else
+  compinit
+fi
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
