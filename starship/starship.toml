@@ -1,10 +1,10 @@
 "$schema" = 'https://starship.rs/config-schema.json'
 
 # ============================================================
-#  Prompt limpo (sem powerline / sem fundo / poucas cores)
-#  Layout:
-#     pasta  branch  status   linguagens          hora
-#   ❯
+#  Prompt limpo, 1 linha (inspirado no 0xDones)
+#  Layout:   pasta  branch status  linguagens  ❯
+#  - diretório em ciano; a RAIZ do repo git em verde (assinatura dele)
+#  - sem powerline, sem fundo, sem degradê
 # ============================================================
 
 format = """
@@ -12,14 +12,13 @@ $os\
 $directory\
 $git_branch\
 $git_status\
+$git_state\
 $nodejs$bun$python$rust$golang\
 $cmd_duration\
-$fill\
-$time\
-$line_break\
 $character"""
 
-add_newline = true
+add_newline = true          # linha em branco antes de cada prompt (respiro)
+command_timeout = 2000
 
 # ---- Ícone da Apple (discreto, cinza) ----
 [os]
@@ -28,67 +27,63 @@ format = "[$symbol ](fg:#565f89)"
 [os.symbols]
 Macos = ""
 
-# ---- Pasta (o destaque: azul) ----
+# ---- Pasta: caminho em ciano, raiz do repo em VERDE ----
 [directory]
-style = "fg:#7aa2f7 bold"
-format = "[$path ]($style)"
+style = "cyan bold"
+repo_root_style = "green bold"
+repo_root_format = "[$repo_root]($repo_root_style)[$path]($style)[$read_only]($read_only_style) "
+format = "[$path]($style)[$read_only]($read_only_style) "
+read_only = " 󰌾"
+read_only_style = "red"
 truncation_length = 3
 truncation_symbol = "…/"
-read_only = "  "
-read_only_style = "fg:#f7768e"
 
 # ---- Git branch (roxo suave) ----
 [git_branch]
 symbol = " "
-style = "fg:#bb9af7"
-format = "[$symbol$branch ]($style)"
+style = "purple"
+format = "[$symbol$branch]($style) "
 
-# ---- Git status (amarelo suave, só quando há mudança) ----
+# ---- Git status (amarelo, só quando há mudança) ----
 [git_status]
-style = "fg:#e0af68"
+style = "yellow"
 format = "([$all_status$ahead_behind]($style) )"
 
-# ---- Linguagens (bem discretas, cinza) ----
+# ---- Git state (rebase/merge/cherry-pick em andamento) ----
+[git_state]
+style = "bright-red"
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+
+# ---- Linguagens (discretas, cinza) ----
 [nodejs]
 symbol = " "
 style = "fg:#565f89"
-format = "[$symbol$version ]($style)"
+format = "[$symbol$version]($style) "
 [bun]
 symbol = " "
 style = "fg:#565f89"
-format = "[$symbol$version ]($style)"
+format = "[$symbol$version]($style) "
 [python]
 symbol = " "
 style = "fg:#565f89"
-format = "[$symbol$version ]($style)"
+format = "[$symbol$version]($style) "
 [rust]
 symbol = " "
 style = "fg:#565f89"
-format = "[$symbol$version ]($style)"
+format = "[$symbol$version]($style) "
 [golang]
 symbol = " "
 style = "fg:#565f89"
-format = "[$symbol$version ]($style)"
+format = "[$symbol$version]($style) "
 
 # ---- Duração de comandos longos (só acima de 2s) ----
 [cmd_duration]
 min_time = 2000
 style = "fg:#565f89"
-format = "[ $duration ]($style)"
-
-# ---- Empurra a hora pra direita ----
-[fill]
-symbol = " "
-
-# ---- Hora (canto direito, cinza) ----
-[time]
-disabled = false
-time_format = "%R"
-style = "fg:#565f89"
-format = "[$time]($style)"
+format = "[ $duration]($style) "
 
 # ---- Caractere do prompt (verde ok / vermelho erro) ----
 [character]
-success_symbol = "[❯](fg:#9ece6a bold)"
-error_symbol = "[❯](fg:#f7768e bold)"
-vimcmd_symbol = "[❮](fg:#7dcfff bold)"
+success_symbol = "[❯](green bold)"
+error_symbol = "[❯](red bold)"
+vimcmd_symbol = "[❮](cyan bold)"

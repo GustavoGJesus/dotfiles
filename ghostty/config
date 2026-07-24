@@ -15,7 +15,7 @@ theme = TokyoNight Night
 # ---------------------------------------------------------
 # FONTE
 # ---------------------------------------------------------
-font-family = JetBrainsMono Nerd Font Mono
+font-family = FiraCode Nerd Font Mono
 font-size = 14
 
 # Deixa o texto mais nítido/encorpado no macOS (Retina)
