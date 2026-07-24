@@ -2,6 +2,8 @@
 
 A beautiful, comfortable and blazing-fast terminal workspace for macOS — **Tokyo Night everywhere**.
 
+![Herdr running Claude Code side by side with a shell — Ghostty, Tokyo Night](assets/terminal.png)
+
 ## What's inside
 
 | Folder | File | Linked to |
