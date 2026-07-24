@@ -53,9 +53,11 @@ key = "prefix+alt+r"
 type = "shell"
 command = "herdr plugin action invoke persiyanov.reviewr.toggle"
 
-# file-viewer: file tree + diffs — ctrl+b, alt+f
+# file-viewer: file tree + diffs — ctrl+b, shift+f
+# (alt chords are unreliable on macOS: Option sends ESC+letter and the pair
+# can arrive split, leaving a bare "f" = herdr's default search)
 [[keys.command]]
-key = "prefix+alt+f"
+key = "prefix+shift+f"
 type = "shell"
 command = "herdr plugin pane open --plugin herdr-file-viewer --entrypoint file-viewer"
 
