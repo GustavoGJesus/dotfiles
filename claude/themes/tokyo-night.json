@@ -1,0 +1,15 @@
+{
+  "name": "Tokyo Night",
+  "base": "dark",
+  "overrides": {
+    "text": "#c0caf5",
+    "userMessageBackground": "#292e42",
+    "userMessageBackgroundHover": "#343a55",
+    "briefLabelYou": "#7dcfff",
+    "briefLabelClaude": "#bb9af7",
+    "claude": "#bb9af7",
+    "success": "#9ece6a",
+    "error": "#f7768e",
+    "warning": "#e0af64"
+  }
+}
