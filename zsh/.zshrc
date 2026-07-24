@@ -51,6 +51,7 @@ source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 eval "$(starship init zsh)"   # prompt
 eval "$(zoxide init zsh)"     # smart cd: use `z <folder>`
 source <(fzf --zsh)           # fuzzy search: Ctrl+R history / Ctrl+T files / Alt+C cd
+eval "$(direnv hook zsh)"     # per-project env vars (.envrc), loaded automatically
 
 # fzf powered by fd + Tokyo Night colors
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
@@ -85,6 +86,23 @@ alias ghosttyrc='${EDITOR:-nvim} "$HOME/Library/Application Support/com.mitchell
 alias gs='git status -sb'
 alias gd='git diff'
 alias gl='git log --oneline --graph --decorate -20'
+
+# gco — fuzzy branch switcher (sorted by recency, with commit preview)
+gco() {
+  local branch
+  branch=$(git branch --sort=-committerdate --format='%(refname:short)' 2>/dev/null |
+    fzf --height 50% --reverse --preview 'git log --oneline --color=always -20 {}') &&
+  git checkout "$branch"
+}
+
+# glog — fuzzy commit browser (enter opens the full diff in the pager)
+glog() {
+  git log --color=always --format='%C(yellow)%h%Creset %s %C(blue)<%an> %C(brightblack)%cr' "$@" |
+    fzf --ansi --no-sort --reverse --height 80% \
+        --preview 'git show --color=always {1}' \
+        --preview-window 'right:55%' \
+        --bind 'enter:execute(git show --color=always {1} | less -R)'
+}
 
 # Note: `fd` (modern find) and `rg` (ripgrep) stay unaliased so scripts
 # that expect the traditional find/grep keep working.

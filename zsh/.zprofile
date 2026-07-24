@@ -4,24 +4,12 @@
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
 # ============================================================
-#  LAZY nvm (saves ~500-700ms per shell)
-#  The default node goes straight into PATH without loading nvm.
-#  The real nvm only loads the first time you type `nvm`.
+#  fnm — fast Node version manager (Rust, ~10ms startup)
+#  --use-on-cd: entering a project with .nvmrc/.node-version
+#  switches the Node version automatically. If a version is
+#  missing, run `fnm install` once inside that project.
 # ============================================================
-export NVM_DIR="$HOME/.nvm"
-if [ -r "$NVM_DIR/alias/default" ]; then
-  _nvm_default="$(cat "$NVM_DIR/alias/default")"
-  case "$_nvm_default" in v*) ;; *) _nvm_default="v$_nvm_default" ;; esac
-  if [ -d "$NVM_DIR/versions/node/$_nvm_default/bin" ]; then
-    export PATH="$NVM_DIR/versions/node/$_nvm_default/bin:$PATH"
-  fi
-  unset _nvm_default
-fi
-nvm() {
-  unset -f nvm
-  [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-  nvm "$@"
-}
+eval "$(fnm env --use-on-cd --shell zsh)"
 
 # Added by OrbStack: command-line tools and integration
 # This won't be added again if you remove it.

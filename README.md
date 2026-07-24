@@ -22,13 +22,15 @@ A beautiful, comfortable and blazing-fast terminal workspace for macOS — **Tok
 - **Workspace manager:** [Herdr](https://herdr.dev) — panes and workspaces built for AI coding agents, with lazygit popup, diff-review sidebar and Linear worktree shortcuts
 - **Shell:** zsh + [Starship](https://starship.rs) one-line prompt + autosuggestions + syntax highlighting
 - **Modern CLI:** eza · bat · fzf · zoxide · fd · ripgrep · git-delta · lazygit · neovim
+- **Node toolchain:** fnm (auto-switches versions on `cd`) · ni (picks npm/pnpm/yarn from the lockfile) · direnv (per-project env vars)
 - **Claude Code:** custom Tokyo Night TUI theme + finely calibrated scrolling (1 line per wheel event, no acceleration)
 
 ## Fast by design
 
-- **Lazy nvm** — the default Node goes straight into PATH; nvm itself only loads the first time you call it (~10x faster shell startup)
+- **fnm** — Rust-fast Node version manager: instant shell startup and automatic version switching when you `cd` into a project with `.nvmrc`
 - **Cached compinit** — completions do a full re-scan at most once a day
 - **One-line prompt** — no powerline, no gradients, nothing slowing you down
+- **Git on autopilot** — `push.autoSetupRemote`, `pull.rebase` + `autoStash`, `rerere` (remembers conflict resolutions), pruned fetches, recency-sorted branches — plus fuzzy `gco`/`glog` helpers
 
 ## Install on a new machine
 
@@ -36,14 +38,12 @@ A beautiful, comfortable and blazing-fast terminal workspace for macOS — **Tok
 # 1. clone
 git clone https://github.com/GustavoGJesus/dotfiles ~/dotfiles
 
-# 2. install the tools (Homebrew)
-brew install starship zsh-autosuggestions zsh-syntax-highlighting \
-  fzf eza bat zoxide git-delta fd ripgrep lazygit neovim herdr
-brew install --cask font-fira-code-nerd-font ghostty
-
-# 3. create the symlinks (backs up anything that already exists)
+# 2. install everything: Brewfile (tools, apps, font) + symlinks
 cd ~/dotfiles && ./install.sh
 ```
+
+Requires [Homebrew](https://brew.sh). The `Brewfile` declares the whole
+toolchain; `install.sh` runs it automatically and then creates the symlinks.
 
 > **Using this repo yourself?** Set your own identity in `git/.gitconfig`
 > (name and email) before running `install.sh` — otherwise you'll be

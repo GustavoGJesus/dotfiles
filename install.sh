@@ -11,6 +11,13 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$HOME/.dotfiles-backup/$STAMP"
 
+# Toolchain first: install everything from the Brewfile (skipped without brew)
+if command -v brew >/dev/null 2>&1; then
+  echo "Installing Homebrew packages from the Brewfile…"
+  brew bundle --file="$DOTFILES/Brewfile" --no-upgrade || true
+  echo
+fi
+
 # Mapping:  path-in-repo | absolute-destination
 PAIRS="
 zsh/.zshrc|$HOME/.zshrc

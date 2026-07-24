@@ -19,3 +19,20 @@
 	conflictstyle = zdiff3
 [diff]
 	colorMoved = default
+
+# ---- automation: the boring parts run themselves ----
+[init]
+	defaultBranch = main
+[push]
+	autoSetupRemote = true
+[pull]
+	rebase = true
+[rebase]
+	autoStash = true
+	updateRefs = true
+[fetch]
+	prune = true
+[rerere]
+	enabled = true
+[branch]
+	sort = -committerdate
