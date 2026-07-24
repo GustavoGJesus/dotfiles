@@ -16,8 +16,9 @@ channel = "stable"
 
 [ui]
 # Mouse capturado pelo Herdr: cliques na sidebar/tabs funcionam.
-# Efeito colateral conhecido: leve "vibração" ao passar o mouse sobre
-# panes com Claude/TUI rodando (cosmético; false resolve mas mata os cliques).
+# A "vibração" ao passar o mouse em panes com Claude era o mouse-tracking
+# do PRÓPRIO Claude Code — resolvida com CLAUDE_CODE_DISABLE_MOUSE=1
+# no env de ~/.claude/settings.json (não mexer aqui).
 mouse_capture = true
 
 # Agentes que precisam de atenção sobem pro topo da sidebar
