@@ -1,0 +1,39 @@
+# worktree-setup (tdi/herdr-worktree-setup): steps that run inside every
+# new worktree Herdr creates (prefix+shift+g, or the Linear picker), so the
+# checkout is usable right away.
+# Linked by install.sh to:
+#   ~/.config/herdr/plugins/config/tdi.worktree-setup/config.toml
+#
+# Each step runs via `sh -c` with cwd = the new worktree; the first failing
+# step stops the run, so optional steps end in `|| true`.
+#   $HERDR_MAIN_REPO  main checkout (where .env files are copied from)
+#   $HERDR_WORKTREE   the new worktree
+#   $HERDR_BRANCH     branch checked out in it
+
+[default]
+steps = [
+  # .env* also matches .envrc, which direnv blocks until it is allowed
+  'cp "$HERDR_MAIN_REPO"/.env* . 2>/dev/null || true',
+  '[ ! -f .envrc ] || direnv allow',
+]
+
+[[project]]
+path = "~/Documents/ephra-app"
+steps = [
+  'cp "$HERDR_MAIN_REPO"/.env* . 2>/dev/null || true',
+  "pnpm install",
+]
+
+[[project]]
+path = "~/Documents/ephra-services"
+steps = [
+  'cp "$HERDR_MAIN_REPO"/.env* . 2>/dev/null || true',
+  "npm install",
+]
+
+[[project]]
+path = "~/Documents/ephra-mobile"
+steps = [
+  'cp "$HERDR_MAIN_REPO"/.env* . 2>/dev/null || true',
+  "npm install",
+]
