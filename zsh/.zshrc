@@ -7,6 +7,7 @@ export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"               # Antigravity
 export PATH="/Applications/Docker.app/Contents/Resources/bin:$PATH"  # Docker
 export PATH="$HOME/.antigravity-ide/antigravity-ide/bin:$PATH"       # Antigravity IDE
+export PATH="/opt/homebrew/opt/libpq/bin:$PATH"                      # psql & co (keg-only libpq)
 
 # ============================================================
 #  History (large, shared, no duplicates)
@@ -23,7 +24,8 @@ setopt INC_APPEND_HISTORY
 # ============================================================
 #  Completions (case-insensitive, with menu and colors)
 # ============================================================
-fpath=("$HOME/dotfiles/zsh/completions" $fpath)   # herdr completions etc.
+# Homebrew formulas (herdr, gh, …) ship their own completions into
+# site-functions, already on fpath via `brew shellenv` in .zprofile.
 # cached compinit: full re-scan at most once a day (faster startup)
 autoload -Uz compinit
 if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh-24) ]]; then

@@ -21,7 +21,8 @@ brew "git-delta"
 # Git & workflow
 brew "gh"
 brew "lazygit"
-brew "jq"         # JSON processor (used by the Claude statusline)
+brew "jq"         # JSON processor (Claude statusline, herdr-project)
+brew "libpq"      # psql and friends, without a local Postgres server
 
 # Node toolchain
 brew "fnm"        # fast Node version manager (auto-switches on cd)
