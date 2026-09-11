@@ -1,5 +1,7 @@
 # herdr — configuration (source of truth: ~/dotfiles/herdr/config.toml)
-# Reload without restarting:  herdr server reload-config
+# Reload without restarting:  herdr server reload-config   (or prefix+shift+r)
+# Validate after editing:     herdr config check
+# Every option and default:   herdr --default-config
 
 onboarding = false
 
@@ -28,39 +30,77 @@ mouse_capture = true
 # Bump to 2 if shell scrollback feels slow.
 mouse_scroll_lines = 1
 
+# Agent panel grouped by project space. "priority" turns it into an
+# attention queue (blocked and finished agents float to the top).
+agent_panel_sort = "spaces"
+
+# In split panes, label each border with the agent running inside it,
+# so a Claude pane is easy to tell apart from a dev-server shell.
+show_agent_labels_on_pane_borders = true
+
+# Claude Code keeps a short title of the task it is on in the terminal
+# title; show it under every Claude row so the sidebar tells you what each
+# agent is doing, not just that it is busy.
+[ui.sidebar.agents.rows_by_agent]
+claude = [
+  ["state_icon", "machine", "workspace", "tab"],
+  [{ token = "terminal_title_stripped", dim = true }],
+]
+
 # Native macOS notification when an agent in a background workspace
-# finishes or is waiting for you (sounds are on by default)
+# finishes or is waiting for you (sounds are on by default).
+# prefix+o jumps straight to the agent that notified you.
 [ui.toast]
 delivery = "system"
 
 # ============================================================
-#  Custom keybindings (default prefix: ctrl+b)
+#  Keybindings (prefix: ctrl+b · prefix+? lists everything)
 # ============================================================
 
-# lazygit in a modal popup — ctrl+b, alt+g
+[keys]
+# Cycle through every agent across all workspaces, like tabs for agents
+next_agent = "prefix+a"
+previous_agent = "prefix+shift+a"
+
+# Project launcher (ctrl+b, shift+o): fuzzy-pick a repo, then focus its
+# workspace or open a new one with Claude Code already running.
+# Script: herdr/bin/herdr-project, linked to ~/.local/bin by install.sh
+[[keys.command]]
+key = "prefix+shift+o"
+type = "popup"
+command = "herdr-project"
+description = "open project (fzf) with Claude"
+width = "70%"
+height = "75%"
+
+# lazygit in a modal popup (ctrl+b, alt+g)
 [[keys.command]]
 key = "prefix+alt+g"
 type = "popup"
 command = "lazygit"
+description = "lazygit"
 width = "85%"
 height = "85%"
 
-# reviewr: agent diff review sidebar — ctrl+b, alt+r
+# reviewr: agent diff review sidebar (ctrl+b, alt+r)
 [[keys.command]]
 key = "prefix+alt+r"
-type = "shell"
-command = "herdr plugin action invoke persiyanov.reviewr.toggle"
+type = "plugin_action"
+command = "persiyanov.reviewr.toggle"
+description = "reviewr: review agent diff"
 
-# file-viewer: file tree + diffs — ctrl+b, shift+f
+# file-viewer: file tree + diffs (ctrl+b, shift+f)
 # (alt chords are unreliable on macOS: Option sends ESC+letter and the pair
 # can arrive split, leaving a bare "f" = herdr's default search)
 [[keys.command]]
 key = "prefix+shift+f"
 type = "shell"
 command = "herdr plugin pane open --plugin herdr-file-viewer --entrypoint file-viewer"
+description = "file viewer"
 
-# Linear: pick an issue → creates worktree + workspace — ctrl+b, alt+l
+# Linear: pick an issue → creates worktree + workspace (ctrl+b, alt+l)
 [[keys.command]]
 key = "prefix+alt+l"
-type = "shell"
-command = "herdr plugin action invoke tdi.worktree-from-linear.pick"
+type = "plugin_action"
+command = "tdi.worktree-from-linear.pick"
+description = "Linear issue → worktree"

@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+# herdr-project: fuzzy-pick a git repo and jump into it as a Herdr workspace.
+#
+#   enter   focus the project's workspace, or create one and start Claude Code
+#   ctrl-s  same, but open a plain shell (no Claude)
+#
+# Repos are found under $HERDR_PROJECT_ROOTS (default: ~/Documents ~/dotfiles)
+# and ranked by zoxide frecency, so the projects you use most come first.
+# Bound to prefix+shift+o as a popup in herdr/config.toml; also runs fine
+# from any Herdr pane. Linked to ~/.local/bin by install.sh.
+set -euo pipefail
+
+if [ "${HERDR_ENV:-}" != 1 ]; then
+  echo "herdr-project: run this inside Herdr" >&2
+  exit 1
+fi
+
+roots=()
+for r in ${HERDR_PROJECT_ROOTS:-$HOME/Documents $HOME/dotfiles}; do
+  [ -d "$r" ] && roots+=("$r")
+done
+
+list_projects() {
+  {
+    zoxide query -ls 2>/dev/null | awk '{ s = $1; sub(/^ *[0-9.]+ +/, ""); print "Z\t" s "\t" $0 }' || true
+    fd --hidden --type d --max-depth 4 \
+      --exclude node_modules --exclude .terraform \
+      --format '{//}' '^\.git$' "${roots[@]}" 2>/dev/null |
+      awk '{ print "R\t0\t" $0 }' || true
+  } | awk -F'\t' '
+    # zoxide paths can differ in case (~/documents vs ~/Documents); APFS does not care
+    $1 == "Z" { score[tolower($3)] += $2; next }
+    !seen[$3]++ { printf "%09.2f\t%s\n", score[tolower($3)], $3 }
+  ' | sort -r | cut -f2 | sed "s#^$HOME#~#"
+}
+
+pick=$(list_projects | fzf --height=100% --layout=reverse --border=none \
+  --prompt='project › ' --expect=ctrl-s \
+  --header='enter: open with Claude · ctrl-s: shell only · esc: cancel' \
+  --preview 'd={}; d="${d/#\~/$HOME}"; git -C "$d" log --color=always --format="%C(yellow)%h%Creset %s %C(brightblack)%cr" -12 2>/dev/null' \
+  --preview-window='down:45%') || exit 0
+
+key=$(sed -n 1p <<<"$pick")
+dir=$(sed -n 2p <<<"$pick")
+[ -n "$dir" ] || exit 0
+dir="${dir/#\~/$HOME}"
+
+# Already open? Focus the workspace that has a pane in this repo.
+existing=$(herdr pane list | jq -r --arg d "$dir" '
+  [.result.panes[] | select(.cwd == $d or (.cwd | startswith($d + "/")))][0].workspace_id // empty')
+if [ -n "$existing" ]; then
+  herdr workspace focus "$existing" >/dev/null
+  exit 0
+fi
+
+created=$(herdr workspace create --cwd "$dir" --focus)
+if [ "$key" != "ctrl-s" ]; then
+  pane=$(jq -r '.result.root_pane.pane_id' <<<"$created")
+  herdr pane run "$pane" claude >/dev/null
+fi
