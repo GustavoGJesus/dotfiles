@@ -21,7 +21,7 @@ foreground = #ffffff
 # FONT
 # ---------------------------------------------------------
 font-family = FiraCode Nerd Font Mono
-font-size = 12
+font-size = 13
 
 # Crisper, fuller text on macOS (Retina)
 font-thicken = true
