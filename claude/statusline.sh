@@ -16,14 +16,14 @@ IFS=$'\t' read -r model dir ctx five week cost added removed <<<"$(jq -r '
     (.cost.total_lines_added // "-"),
     (.cost.total_lines_removed // "-") ] | @tsv' <<<"$input")"
 
-# Tokyo Night
-P=$'\033[38;2;187;154;247m'   # purple
-C=$'\033[38;2;125;207;255m'   # cyan
-B=$'\033[38;2;122;162;247m'   # blue
-G=$'\033[38;2;158;206;106m'   # green
-Y=$'\033[38;2;224;175;104m'   # yellow
-R=$'\033[38;2;247;118;142m'   # red
-D=$'\033[38;2;86;95;137m'     # dim gray-blue
+# Monokai Pro Ristretto
+P=$'\033[38;2;249;204;108m'   # gold
+C=$'\033[38;2;133;218;204m'   # cyan
+B=$'\033[38;2;243;141;112m'   # coral
+G=$'\033[38;2;173;218;120m'   # green
+Y=$'\033[38;2;249;204;108m'   # gold
+R=$'\033[38;2;253;104;131m'   # red
+D=$'\033[38;2;114;105;106m'   # dim warm gray
 X=$'\033[0m'
 
 # green under 60%, yellow under 85%, red above

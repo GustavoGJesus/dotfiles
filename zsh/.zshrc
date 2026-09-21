@@ -42,7 +42,7 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 # ============================================================
 # Ghost suggestion pulled from history (press → to accept)
 source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#565f89'   # blue-gray (Tokyo Night)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#72696a'   # warm gray (Ristretto)
 
 # Syntax highlighting — MUST be the last thing sourced
 source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -55,13 +55,13 @@ eval "$(zoxide init zsh)"     # smart cd: use `z <folder>`
 source <(fzf --zsh)           # fuzzy search: Ctrl+R history / Ctrl+T files / Alt+C cd
 eval "$(direnv hook zsh)"     # per-project env vars (.envrc), loaded automatically
 
-# fzf powered by fd + Tokyo Night colors
+# fzf powered by fd + Monokai Pro Ristretto colors
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
 export FZF_DEFAULT_OPTS="--height 45% --layout=reverse --border=rounded \
-  --color=fg:#c0caf5,bg:-1,hl:#7aa2f7,fg+:#c0caf5,bg+:#292e42,hl+:#7dcfff \
-  --color=info:#7aa2f7,prompt:#7dcfff,pointer:#bb9af7,marker:#9ece6a,spinner:#9ece6a,header:#9ece6a"
+  --color=fg:#fff1f3,bg:-1,hl:#f38d70,fg+:#fff1f3,bg+:#403838,hl+:#f9cc6c \
+  --color=info:#85dacc,prompt:#f38d70,pointer:#f38d70,marker:#adda78,spinner:#f9cc6c,header:#85dacc"
 
 # ============================================================
 #  Aliases

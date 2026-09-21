@@ -9,12 +9,18 @@
 	navigate = true
 	line-numbers = true
 	hyperlinks = true
-	file-style = "#7aa2f7"
-	file-decoration-style = "#7aa2f7 ul"
-	line-numbers-minus-style = "#f7768e"
-	line-numbers-plus-style = "#9ece6a"
-	line-numbers-zero-style = "#3b4261"
-	hunk-header-decoration-style = "#3b4261"
+	file-style = "#85dacc"
+	file-decoration-style = "#85dacc ul"
+	line-numbers-minus-style = "#fd6883"
+	line-numbers-plus-style = "#adda78"
+	line-numbers-zero-style = "#72696a"
+	hunk-header-decoration-style = "#5b5353"
+	# Without these, delta picks its own vivid green/red backgrounds,
+	# which shout over Ristretto. "syntax" keeps the code highlighted.
+	plus-style = "syntax #33402c"
+	plus-emph-style = "syntax #4a5c3c"
+	minus-style = "syntax #4a2f33"
+	minus-emph-style = "syntax #6b3d43"
 [merge]
 	conflictstyle = zdiff3
 [diff]

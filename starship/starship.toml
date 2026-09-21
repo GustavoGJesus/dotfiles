@@ -23,7 +23,7 @@ command_timeout = 2000
 # ---- Apple icon (subtle, gray) ----
 [os]
 disabled = false
-format = "[$symbol ](fg:#565f89)"
+format = "[$symbol ](fg:#72696a)"
 [os.symbols]
 Macos = ""
 
@@ -38,10 +38,10 @@ read_only_style = "red"
 truncation_length = 3
 truncation_symbol = "…/"
 
-# ---- Git branch (soft purple) ----
+# ---- Git branch (coral, same tone as the Claude Code statusline) ----
 [git_branch]
 symbol = " "
-style = "purple"
+style = "fg:#f38d70"
 format = "[$symbol$branch]($style) "
 
 # ---- Git status (yellow, only when something changed) ----
@@ -57,29 +57,29 @@ format = '\([$state( $progress_current/$progress_total)]($style)\) '
 # ---- Languages (subtle, gray) ----
 [nodejs]
 symbol = " "
-style = "fg:#565f89"
+style = "fg:#72696a"
 format = "[$symbol$version]($style) "
 [bun]
 symbol = " "
-style = "fg:#565f89"
+style = "fg:#72696a"
 format = "[$symbol$version]($style) "
 [python]
 symbol = " "
-style = "fg:#565f89"
+style = "fg:#72696a"
 format = "[$symbol$version]($style) "
 [rust]
 symbol = " "
-style = "fg:#565f89"
+style = "fg:#72696a"
 format = "[$symbol$version]($style) "
 [golang]
 symbol = " "
-style = "fg:#565f89"
+style = "fg:#72696a"
 format = "[$symbol$version]($style) "
 
 # ---- Long command duration (only above 2s) ----
 [cmd_duration]
 min_time = 2000
-style = "fg:#565f89"
+style = "fg:#72696a"
 format = "[ $duration]($style) "
 
 # ---- Prompt character (green ok / red error) ----

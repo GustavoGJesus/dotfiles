@@ -30,6 +30,7 @@ herdr/config.toml|$HOME/.config/herdr/config.toml
 herdr/plugins/worktree-setup.toml|$HOME/.config/herdr/plugins/config/tdi.worktree-setup/config.toml
 herdr/bin/herdr-project|$HOME/.local/bin/herdr-project
 claude/themes/tokyo-night.json|$HOME/.claude/themes/tokyo-night.json
+claude/themes/monokai-ristretto.json|$HOME/.claude/themes/monokai-ristretto.json
 claude/statusline.sh|$HOME/.claude/statusline.sh
 claude/CLAUDE.md|$HOME/.claude/CLAUDE.md
 "

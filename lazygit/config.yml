@@ -1,29 +1,29 @@
-# lazygit — Tokyo Night theme + Nerd Font
+# lazygit — Monokai Pro Ristretto theme + Nerd Font
 gui:
   nerdFontsVersion: "3"
   showFileTree: true
   showRandomTip: false
   theme:
     activeBorderColor:
-      - "#7aa2f7"
+      - "#f38d70"
       - bold
     inactiveBorderColor:
-      - "#565f89"
+      - "#72696a"
     optionsTextColor:
-      - "#7aa2f7"
+      - "#85dacc"
     selectedLineBgColor:
-      - "#292e42"
+      - "#403838"
     cherryPickedCommitBgColor:
-      - "#3b4261"
+      - "#5b5353"
     cherryPickedCommitFgColor:
-      - "#7aa2f7"
+      - "#85dacc"
     unstagedChangesColor:
-      - "#f7768e"
+      - "#fd6883"
     defaultFgColor:
-      - "#c0caf5"
+      - "#fff1f3"
     searchingActiveBorderColor:
-      - "#e0af68"
-  authorColorDefault: "#bb9af7"
+      - "#f9cc6c"
+  authorColorDefault: "#f9cc6c"
 git:
   paging:
     colorArg: always

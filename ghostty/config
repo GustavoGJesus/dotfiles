@@ -8,14 +8,21 @@
 # ---------------------------------------------------------
 # THEME
 # ---------------------------------------------------------
-# Tokyo Night (#1a1b26 background). Swap it for any theme from:
-#   ghostty +list-themes   (live preview in the terminal)
-theme = TokyoNight Night
+# Monokai Pro Ristretto: warm espresso background (#2c2525) with near-white
+# text (#fff1f3) and the coffee-toned accents — coral #f38d70, gold #f9cc6c,
+# green #adda78, cyan #85dacc, red #fd6883.
+# Browse alternatives with `ghostty +list-themes` (live preview).
+theme = Monokai Pro Ristretto
 
-# Default text in pure white — Tokyo Night's stock foreground (#c0caf5)
-# reads bluish; this override wins over the theme's foreground and is what
-# actually paints unstyled text everywhere (shell, Claude Code chat body).
-foreground = #ffffff
+# Ristretto's own magenta slot is a periwinkle (#a8a9eb), which reads as
+# purple. Nothing in this setup needs a distinct magenta any more, so slots 5
+# and 13 fall back to the palette's red and no purple can reach the screen.
+palette = 5=#fd6883
+palette = 13=#fd6883
+
+# The theme's foreground (#fff1f3) is a warm near-white and is what paints
+# unstyled text everywhere (shell, Claude Code chat body). Herdr mirrors this
+# palette in dotfiles/herdr/config.toml, under [theme.custom].
 
 # ---------------------------------------------------------
 # FONT
@@ -29,6 +36,11 @@ font-thicken = true
 # Vertical breathing room between lines (reading comfort)
 adjust-cell-height = 10%
 
+# Claude Code writes its markdown bold with the terminal's default foreground,
+# so this is what turns every **highlighted** word coral instead of white.
+# Bold text that already carries its own color is left alone.
+bold-color = #f38d70
+
 # Ligatures (=>  ===  !=  ->) are ON by default.
 # To turn them OFF, uncomment the line below:
 # font-feature = -calt, -liga, -dlig
@@ -39,9 +51,9 @@ adjust-cell-height = 10%
 # More vivid colors on Apple displays (P3)
 window-colorspace = display-p3
 
-# Modern frosted glass: transparency + blur
-background-opacity = 0.92
-background-blur = 20
+# Fully opaque: nothing from the desktop shows through the terminal.
+background-opacity = 1.0
+# background-blur = 20
 
 # Unfocused splits dim slightly (helps you focus)
 unfocused-split-opacity = 0.85

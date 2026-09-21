@@ -6,8 +6,43 @@
 onboarding = false
 
 [theme]
-# Same theme as Ghostty/Starship/lazygit — Tokyo Night everywhere
-name = "tokyo-night"
+# Monokai Pro Ristretto, the same palette Ghostty runs (dotfiles/ghostty/config).
+# Herdr has no built-in Ristretto, so "vesper" is only a warm dark fallback and
+# every color token below is overridden explicitly.
+name = "vesper"
+
+# Ristretto's 8-step neutral ramp:
+#   #2c2525  #403838  #5b5353  #72696a  #948a8b  #c3b7b8  #e6dcdd  #fff1f3
+# and its six accents: coral #f38d70, gold #f9cc6c, green #adda78,
+# cyan #85dacc, red #fd6883. Ristretto's periwinkle is deliberately unused.
+[theme.custom]
+# "reset" makes panes fall back to Ghostty's own background, so the window
+# transparency and blur survive instead of being painted over.
+panel_bg = "reset"
+sidebar_bg = "#2c2525"
+active_row_bg = "#403838"
+selection_bg = "#5b5353"
+surface0 = "#403838"
+surface1 = "#5b5353"
+surface_dim = "#241e1e"
+overlay0 = "#72696a"
+overlay1 = "#948a8b"
+text = "#fff1f3"
+subtext0 = "#c3b7b8"
+
+# Coral is Ristretto's signature accent — the color of the active tab and of
+# the highlighted row in the agent sidebar.
+accent = "#f38d70"
+peach = "#f38d70"
+red = "#fd6883"
+yellow = "#f9cc6c"
+green = "#adda78"
+teal = "#85dacc"
+# Ristretto's cool accent is a periwinkle, which still reads as purple, so both
+# of these cool slots are pinned to coral. The git branch under each workspace
+# in the sidebar comes from one of them.
+mauve = "#f38d70"
+blue = "#f38d70"
 
 [terminal]
 # New panes inherit the current pane's directory (great for splits in the same project)
