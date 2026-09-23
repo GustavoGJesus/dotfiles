@@ -101,6 +101,19 @@ if command -v jq >/dev/null 2>&1 && [ -f "$SETTINGS" ]; then
   fi
 fi
 
+# ai-memory (akitaonrails/ai-memory): render the LaunchAgent for the native
+# binary and (re)load it. The bundle itself is installed by hand from the
+# GitHub release into ~/.local/share/ai-memory (see README).
+AIM_BIN="$HOME/.local/share/ai-memory/ai-memory"
+if [ -x "$AIM_BIN" ]; then
+  AIM_PLIST="$HOME/Library/LaunchAgents/com.github.akitaonrails.ai-memory.plist"
+  mkdir -p "$HOME/Library/LaunchAgents" "$HOME/Library/Logs/ai-memory"
+  sed -e "s|__AI_MEMORY_BIN__|$AIM_BIN|g" -e "s|__HOME__|$HOME|g" \
+    "$DOTFILES/ai-memory/launchagent.plist.template" >"$AIM_PLIST"
+  launchctl bootout "gui/$(id -u)" "$AIM_PLIST" >/dev/null 2>&1 || true
+  launchctl bootstrap "gui/$(id -u)" "$AIM_PLIST" && echo "  ✓ ai-memory LaunchAgent loaded"
+fi
+
 echo
 if [ -d "$BACKUP" ]; then
   echo "Backups saved to: ${BACKUP/#$HOME/~}"

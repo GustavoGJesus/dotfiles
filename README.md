@@ -84,6 +84,24 @@ For large projects, keep `CLAUDE.md` lean and move module detail into
 `.claude/rules/*.md` with a `paths:` frontmatter, so each file only enters
 the context when Claude reads code in that area.
 
+## Searchable session archive (ai-memory)
+
+[ai-memory](https://github.com/akitaonrails/ai-memory) captures every Claude
+Code session through lifecycle hooks, redacts credentials, and keeps a
+git-versioned markdown wiki plus an FTS/vector index you can search from the
+CLI or through its MCP tools. It runs as a 13MB loopback server without any
+LLM or API key.
+
+Install the native bundle from the GitHub release into
+`~/.local/share/ai-memory` (binary plus `hooks/` and `packaging/`), symlink
+the binary into `~/.local/bin`, run `ai-memory init`, then `./install.sh`
+renders `ai-memory/launchagent.plist.template` and loads the LaunchAgent.
+Wire a project with `ai-memory install-hooks --agent claude-code
+--project-strategy repo-root` and `claude mcp add --transport http ai-memory
+http://127.0.0.1:49374/mcp -s local`, run once from inside the repo; the
+hooks go in that project's `.claude/settings.local.json`, so only opted-in
+projects are captured.
+
 ## Install on a new machine
 
 ```bash
