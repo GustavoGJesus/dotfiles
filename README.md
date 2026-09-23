@@ -17,7 +17,7 @@ A beautiful, comfortable and blazing-fast terminal workspace for macOS — **Tok
 | `herdr/` | `plugins/worktree-setup.toml` | `~/.config/herdr/plugins/config/tdi.worktree-setup/config.toml` |
 | `herdr/` | `bin/herdr-project` | `~/.local/bin/herdr-project` |
 | `herdr/` | `plugins.txt` | installed with `herdr plugin install` |
-| `claude/` | `themes/tokyo-night.json`, `statusline.sh`, `CLAUDE.md` | `~/.claude/` |
+| `claude/` | `themes/*.json`, `statusline.sh`, `CLAUDE.md`, `hooks/session-briefing.sh`, `skills/handoff/` | `~/.claude/` |
 
 ## The stack
 
@@ -62,6 +62,27 @@ Claude Code integration (session resume after restarts) and Herdr's own agent
 skill, so you can ask Claude to "use Herdr to run the tests in a pane beside
 me". Herdr is upgraded through Homebrew; run `./install.sh` again after
 `brew upgrade herdr` so the integration and the skill follow the new version.
+
+## Claude remembers where you stopped
+
+Claude Code already keeps a per-project auto memory for durable facts and
+decisions. Two pieces here cover the part it misses, the work still in flight.
+
+`claude/hooks/session-briefing.sh` runs on every `SessionStart` inside a git
+repo and hands Claude the branch, its drift from upstream, the last commits,
+the uncommitted files and the latest handoff note, in about 150ms. It also
+warns when a project's `MEMORY.md` gets close to the 200 line / 25KB load
+limit, so the index never gets silently cut.
+
+The `handoff` skill (`/handoff`, or just say you are stopping for the day)
+has Claude overwrite `handoff.md` in the project's memory directory with the
+goal, the current state, the next step and the traps, and promote anything
+durable into proper memories. The next session in that repo, or in any of its
+worktrees, starts with that note for ten days.
+
+For large projects, keep `CLAUDE.md` lean and move module detail into
+`.claude/rules/*.md` with a `paths:` frontmatter, so each file only enters
+the context when Claude reads code in that area.
 
 ## Install on a new machine
 

@@ -33,6 +33,8 @@ claude/themes/tokyo-night.json|$HOME/.claude/themes/tokyo-night.json
 claude/themes/monokai-ristretto.json|$HOME/.claude/themes/monokai-ristretto.json
 claude/statusline.sh|$HOME/.claude/statusline.sh
 claude/CLAUDE.md|$HOME/.claude/CLAUDE.md
+claude/hooks/session-briefing.sh|$HOME/.claude/hooks/session-briefing.sh
+claude/skills/handoff|$HOME/.claude/skills/handoff
 "
 
 link() {
@@ -81,6 +83,22 @@ if command -v herdr >/dev/null 2>&1; then
   mkdir -p "$HOME/.claude/skills/herdr"
   herdr --skill >"$HOME/.claude/skills/herdr/SKILL.md" &&
     echo "  ✓ claude    skill ~/.claude/skills/herdr"
+fi
+
+# Claude Code: register the session briefing hook in settings.json once.
+# settings.json stays out of the repo (it holds keys), so patch it in place.
+SETTINGS="$HOME/.claude/settings.json"
+BRIEFING="bash '$HOME/.claude/hooks/session-briefing.sh'"
+if command -v jq >/dev/null 2>&1 && [ -f "$SETTINGS" ]; then
+  if jq -e --arg c "$BRIEFING" '[.hooks.SessionStart[]?.hooks[]?.command] | index($c)' "$SETTINGS" >/dev/null; then
+    echo "  ✓ claude    session briefing hook"
+  else
+    tmp="$(mktemp)"
+    jq --arg c "$BRIEFING" '.hooks.SessionStart = ((.hooks.SessionStart // []) +
+      [{"matcher": "*", "hooks": [{"type": "command", "command": $c, "timeout": 5}]}])' \
+      "$SETTINGS" >"$tmp" && mv "$tmp" "$SETTINGS"
+    echo "  → claude    session briefing hook registered"
+  fi
 fi
 
 echo
