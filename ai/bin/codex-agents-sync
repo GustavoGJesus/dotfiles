@@ -61,7 +61,7 @@ def render(md, meta, args):
     tools = as_list(meta.get("tools"))
     disallowed = as_list(meta.get("disallowedTools"))
     skills = as_list(meta.get("skills"))
-    writes = not ({"Edit", "Write"} & set(disallowed)) and (not tools or "Edit" in tools or "Write" in tools)
+    read_only = {"Edit", "Write"} <= set(disallowed) or bool(tools and not {"Edit", "Write"} & set(tools))
     spawns = "Agent" not in disallowed and (not tools or "Agent" in tools)
 
     lines = [
@@ -73,6 +73,9 @@ def render(md, meta, args):
         "means spawning a subagent, the Skill tool means reading a SKILL.md file, and "
         "`.claude/skills/<name>` is the same folder as `.agents/skills/<name>`.",
     ]
+    if args.root and os.path.exists(os.path.join(args.root, "AGENTS.md")):
+        lines += ["", "Where the role says to read the workspace `CLAUDE.md`, read `AGENTS.md`: "
+                  "CLAUDE.md only imports it and adds Claude Code specifics."]
     if skills:
         lines += ["", "Before doing anything else, read these skills in full; the role depends on them:"]
         lines += [f"- `{show(os.path.join(args.skills, s, 'SKILL.md'), args.root)}`" for s in skills]
@@ -80,7 +83,7 @@ def render(md, meta, args):
         memory = show(os.path.join(args.memory, name, "MEMORY.md"), args.root)
         lines += ["", f"Your project memory is `{memory}`. Read it at start if it exists, and "
                   "record durable facts there the way the role file describes."]
-    if not writes:
+    if read_only:
         lines += ["", "You are read-only. Never create, edit, move or delete files, never commit "
                   "and never push. Codex cannot narrow the sandbox of a custom agent, so this "
                   "boundary is yours to keep; report what should change instead."]
