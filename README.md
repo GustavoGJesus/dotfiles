@@ -33,6 +33,7 @@ A beautiful, comfortable and blazing-fast terminal workspace for macOS — **Tok
 - **Node toolchain:** fnm (auto-switches versions on `cd`) · ni (picks npm/pnpm/yarn from the lockfile) · direnv (per-project env vars)
 - **Coding agents:** Claude Code and Codex side by side, sharing one set of global instructions, skills, session briefing and guardrails (see below)
 - **Claude Code:** custom TUI theme + finely calibrated scrolling (1 line per wheel event, no acceleration)
+- **Usage at a glance:** both agents show model, folder, branch, context used, the 5h and weekly plan limits and the session cost under the prompt (`claude/statusline.sh` for Claude Code, the `[tui] status_line` items `install.sh` writes for Codex)
 
 ## Fast by design
 

@@ -172,6 +172,34 @@ if command -v codex >/dev/null 2>&1; then
       codex mcp add "$name" "$@" >/dev/null && echo "  → codex     mcp $name"
     fi
   }
+  # Footer and terminal title, the counterpart of claude/statusline.sh: model,
+  # folder, branch, context, the 5h and weekly limits and the session cost.
+  # Codex has no status line script, only built-in items, so the keys are
+  # written into [tui] when missing and a local change is never overwritten.
+  # The thread title in the terminal title is what Herdr's sidebar shows.
+  CODEX_CONFIG="$HOME/.codex/config.toml" python3 - <<'PY'
+import os, re, tomllib
+path = os.environ["CODEX_CONFIG"]
+text = open(path).read() if os.path.exists(path) else ""
+tui = tomllib.loads(text).get("tui", {})
+wanted = {
+    "status_line": '["model-with-reasoning", "current-dir", "git-branch", "context-used", '
+                   '"five-hour-limit", "weekly-limit", "estimated-thread-cost"]',
+    "status_line_use_colors": "true",
+    "terminal_title": '["spinner", "thread-title"]',
+}
+lines = "".join(f"{k} = {v}\n" for k, v in wanted.items() if k not in tui)
+if lines:
+    if re.search(r"^\[tui\]\n", text, re.M):
+        text = re.sub(r"^\[tui\]\n", "[tui]\n" + lines, text, count=1, flags=re.M)
+    else:
+        text = text.rstrip("\n") + "\n\n[tui]\n" + lines
+    open(path, "w").write(text)
+    print("  → codex     status line and terminal title")
+else:
+    print("  ✓ codex     status line and terminal title")
+PY
+
   command -v serena >/dev/null 2>&1 &&
     codex_mcp serena -- serena start-mcp-server --context=codex --project-from-cwd
 
