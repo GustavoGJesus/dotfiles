@@ -1,0 +1,71 @@
+# Machine-wide guardrails for Codex, the counterpart of the `deny` list in
+# ~/.claude/settings.json. Linked to ~/.codex/rules/safety.rules by
+# install.sh. Codex applies the strictest matching decision, so these win
+# over any allow entry the TUI appends to default.rules.
+# Test a command: codex execpolicy check --pretty --rules <file> -- <command>
+# Projects add their own rules in <repo>/.codex/rules/.
+
+# Database writes are run by a person, never by an agent.
+prefix_rule(
+    pattern = [["npx", "pnpm", "bunx"], "prisma", ["migrate", "db"]],
+    decision = "forbidden",
+    justification = "Migrations and db push run by hand; give Gustavo the command.",
+    match = ["npx prisma migrate deploy", "pnpm prisma db push"],
+    not_match = ["npx prisma generate", "npx prisma validate"],
+)
+
+prefix_rule(
+    pattern = ["prisma", ["migrate", "db"]],
+    decision = "forbidden",
+    justification = "Migrations and db push run by hand; give Gustavo the command.",
+    match = ["prisma migrate dev"],
+)
+
+prefix_rule(
+    pattern = [["npm", "pnpm"], "run", [
+        "db:push", "db:migrate", "db:seed", "db:reset", "db:deploy",
+        "prisma:push", "prisma:seed", "prisma:migrate", "prisma:master:deploy",
+        "tenant:migrate", "tenant:migrate-all",
+    ]],
+    decision = "forbidden",
+    justification = "Scripts that write to a database run by hand.",
+    match = ["npm run tenant:migrate-all", "pnpm run db:push"],
+    not_match = ["npm run prisma:sync -- --check", "npm run check"],
+)
+
+prefix_rule(
+    pattern = [["scripts/db.sh", "./scripts/db.sh"]],
+    decision = "forbidden",
+    justification = "Database script runs by hand.",
+)
+
+prefix_rule(
+    pattern = [["bash", "sh"], ["scripts/db.sh", "./scripts/db.sh"]],
+    decision = "forbidden",
+    justification = "Database script runs by hand.",
+)
+
+prefix_rule(
+    pattern = ["psql"],
+    decision = "forbidden",
+    justification = "No direct SQL sessions against any database.",
+    match = ["psql", "psql postgres://localhost/db"],
+)
+
+# History rewrites on a remote.
+prefix_rule(
+    pattern = ["git", "push", ["--force", "-f", "--force-with-lease"]],
+    decision = "forbidden",
+    justification = "Never force-push; open a new commit instead.",
+    match = ["git push --force", "git push -f origin feat/x"],
+    not_match = ["git push -u origin feat/x"],
+)
+
+# Infrastructure changes.
+prefix_rule(
+    pattern = ["terraform", ["apply", "destroy"]],
+    decision = "forbidden",
+    justification = "Infrastructure changes are applied by a person.",
+    match = ["terraform apply", "terraform destroy -auto-approve"],
+    not_match = ["terraform plan"],
+)

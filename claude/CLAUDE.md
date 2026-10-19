@@ -1,22 +1,10 @@
-# Writing style (always apply)
+@~/dotfiles/ai/AGENTS.md
 
-These rules cover everything written for Gustavo: chat replies, commit
-messages, markdown and README files, page copy, PR descriptions, docs.
+# Claude Code only
 
-**No em dashes as connectors.** Never use "—" or a spaced " - " to link
-phrases inside a sentence. Use a comma, a period, or rewrite the sentence.
-Hyphens inside compound words are fine.
+The shared instructions above are also what Codex reads, so anything that
+holds for every agent goes in `~/dotfiles/ai/AGENTS.md`, not here.
 
-**Prose over bullets.** Write natural paragraphs by default, the way a
-person would. Bullet lists are only for truly enumerable items, like a set
-of commands, options or file names. If a bullet would carry a full sentence
-of explanation or reasoning, turn it into prose. The same goes for tables:
-only when comparing real data, never to decorate an explanation.
-
-**Sound human.** Vary sentence length and structure. Avoid formulaic
-constructions like "it's not X, it's Y" and avoid stacking short punchy
-fragments. Skip filler openers such as "Great question!".
-
-**Commit messages.** Imperative subject line plus a short prose body when
-context helps. No bullet lists unless the commit genuinely bundles
-independent changes.
+Durable facts and decisions go in this project's auto memory as usual. Work
+still in flight goes in the handoff note written by the `handoff` skill,
+which both Claude Code and Codex read at the start of a session.

@@ -1,8 +1,10 @@
 #!/usr/bin/env bash
 # herdr-project: fuzzy-pick a git repo and jump into it as a Herdr workspace.
 #
-#   enter   focus the project's workspace, or create one and start Claude Code
-#   ctrl-s  same, but open a plain shell (no Claude)
+#   enter   focus the project's workspace, or create one and start the default
+#           agent ($HERDR_PROJECT_AGENT: claude or codex, default claude)
+#   ctrl-x  same, but start the other agent
+#   ctrl-s  same, but open a plain shell (no agent)
 #
 # Repos are found under $HERDR_PROJECT_ROOTS (default: ~/Documents ~/dotfiles)
 # and ranked by zoxide frecency, so the projects you use most come first.
@@ -34,9 +36,15 @@ list_projects() {
   ' | sort -r | cut -f2 | sed "s#^$HOME#~#"
 }
 
+default_agent=${HERDR_PROJECT_AGENT:-claude}
+case "$default_agent" in
+  codex) other_agent=claude ;;
+  *) default_agent=claude other_agent=codex ;;
+esac
+
 pick=$(list_projects | fzf --height=100% --layout=reverse --border=none \
-  --prompt='project › ' --expect=ctrl-s \
-  --header='enter: open with Claude · ctrl-s: shell only · esc: cancel' \
+  --prompt='project › ' --expect=ctrl-s,ctrl-x \
+  --header="enter: open with $default_agent · ctrl-x: with $other_agent · ctrl-s: shell only · esc: cancel" \
   --preview 'd={}; d="${d/#\~/$HOME}"; git -C "$d" log --color=always --format="%C(yellow)%h%Creset %s %C(brightblack)%cr" -12 2>/dev/null' \
   --preview-window='down:45%') || exit 0
 
@@ -53,8 +61,14 @@ if [ -n "$existing" ]; then
   exit 0
 fi
 
+case "$key" in
+  ctrl-s) agent= ;;
+  ctrl-x) agent=$other_agent ;;
+  *) agent=$default_agent ;;
+esac
+
 created=$(herdr workspace create --cwd "$dir" --focus)
-if [ "$key" != "ctrl-s" ]; then
+if [ -n "$agent" ]; then
   pane=$(jq -r '.result.root_pane.pane_id' <<<"$created")
-  herdr pane run "$pane" claude >/dev/null
+  herdr pane run "$pane" "$agent" >/dev/null
 fi

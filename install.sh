@@ -33,8 +33,11 @@ claude/themes/tokyo-night.json|$HOME/.claude/themes/tokyo-night.json
 claude/themes/monokai-ristretto.json|$HOME/.claude/themes/monokai-ristretto.json
 claude/statusline.sh|$HOME/.claude/statusline.sh
 claude/CLAUDE.md|$HOME/.claude/CLAUDE.md
-claude/hooks/session-briefing.sh|$HOME/.claude/hooks/session-briefing.sh
-claude/skills/handoff|$HOME/.claude/skills/handoff
+ai/AGENTS.md|$HOME/.codex/AGENTS.md
+ai/hooks/session-briefing.sh|$HOME/.claude/hooks/session-briefing.sh
+ai/skills/handoff|$HOME/.agents/skills/handoff
+ai/codex/rules/safety.rules|$HOME/.codex/rules/safety.rules
+ai/bin/codex-agents-sync|$HOME/.local/bin/codex-agents-sync
 "
 
 link() {
@@ -64,9 +67,9 @@ while IFS='|' read -r src dest; do
   link "$src" "$dest"
 done <<< "$PAIRS"
 
-# Herdr: plugins from herdr/plugins.txt, the Claude Code integration and
-# Herdr's own agent skill. Re-run after `brew upgrade herdr` so the
-# integration and the skill match the new version.
+# Herdr: plugins from herdr/plugins.txt, the Claude Code and Codex
+# integrations and Herdr's own agent skill. Re-run after `brew upgrade herdr`
+# so the integrations and the skill match the new version.
 if command -v herdr >/dev/null 2>&1; then
   echo
   echo "Setting up Herdr…"
@@ -79,11 +82,42 @@ if command -v herdr >/dev/null 2>&1; then
   done < <(grep -Ev '^[[:space:]]*(#|$)' "$DOTFILES/herdr/plugins.txt")
 
   herdr integration install claude >/dev/null && echo "  ✓ claude    integration hooks"
+  if command -v codex >/dev/null 2>&1; then
+    herdr integration install codex >/dev/null && echo "  ✓ codex     integration hooks"
+  fi
 
-  mkdir -p "$HOME/.claude/skills/herdr"
-  herdr --skill >"$HOME/.claude/skills/herdr/SKILL.md" &&
-    echo "  ✓ claude    skill ~/.claude/skills/herdr"
+  # Written once under ~/.agents/skills; the mirror step below links it
+  # into ~/.claude/skills for Claude Code.
+  mkdir -p "$HOME/.agents/skills/herdr"
+  herdr --skill >"$HOME/.agents/skills/herdr/SKILL.md" &&
+    echo "  ✓ agents    skill ~/.agents/skills/herdr"
 fi
+
+# Personal skills: ~/.agents/skills is the one place they live (Codex reads
+# it, and `npx skills add` installs there). Claude Code only reads
+# ~/.claude/skills, so every skill is linked into it. A real folder there
+# with the same content is an old copy and is replaced by the link; one that
+# differs is left alone and reported.
+echo
+echo "Linking personal skills for Claude Code…"
+for skill in "$HOME/.agents/skills"/*/; do
+  skill="${skill%/}"
+  name="$(basename "$skill")"
+  dest="$HOME/.claude/skills/$name"
+  if [ -L "$dest" ] && [ -e "$dest" ]; then
+    continue
+  elif [ -L "$dest" ]; then
+    rm "$dest"
+  elif [ -d "$dest" ]; then
+    if diff -rq "$skill" "$dest" >/dev/null 2>&1 || [ "$name" = herdr ]; then
+      rm -rf "$dest"
+    else
+      echo "  ! differs   ~/.claude/skills/$name (kept; compare with ~/.agents/skills/$name)"
+      continue
+    fi
+  fi
+  ln -s "$skill" "$dest" && echo "  → linked    ~/.claude/skills/$name"
+done
 
 # Claude Code: register the session briefing hook in settings.json once.
 # settings.json stays out of the repo (it holds keys), so patch it in place.
@@ -98,6 +132,53 @@ if command -v jq >/dev/null 2>&1 && [ -f "$SETTINGS" ]; then
       [{"matcher": "*", "hooks": [{"type": "command", "command": $c, "timeout": 5}]}])' \
       "$SETTINGS" >"$tmp" && mv "$tmp" "$SETTINGS"
     echo "  → claude    session briefing hook registered"
+  fi
+fi
+
+# Codex: the briefing hook, the MCP servers every project uses and the
+# personal agents. config.toml and hooks.json stay out of the repo (Codex
+# writes trust hashes and approvals into them), so they are patched in place.
+if command -v codex >/dev/null 2>&1; then
+  echo
+  echo "Setting up Codex…"
+  CODEX_HOOKS="$HOME/.codex/hooks.json"
+  BRIEFING_CODEX="bash '$DOTFILES/ai/hooks/session-briefing.sh'"
+  [ -f "$CODEX_HOOKS" ] || echo '{"hooks":{}}' >"$CODEX_HOOKS"
+  if jq -e --arg c "$BRIEFING_CODEX" '[.hooks.SessionStart[]?.hooks[]?.command] | index($c)' "$CODEX_HOOKS" >/dev/null; then
+    echo "  ✓ codex     session briefing hook"
+  else
+    tmp="$(mktemp)"
+    jq --arg c "$BRIEFING_CODEX" '.hooks.SessionStart = ((.hooks.SessionStart // []) +
+      [{"matcher": "startup|resume|clear|compact", "hooks": [{"type": "command", "command": $c, "timeout": 5}]}])' \
+      "$CODEX_HOOKS" >"$tmp" && mv "$tmp" "$CODEX_HOOKS"
+    echo "  → codex     session briefing hook registered (trust it once with /hooks in Codex)"
+  fi
+
+  # GitNexus registers its MCP server (Claude Code and Codex) and its skills
+  # with the path `which gitnexus` returns. Inside a shell that is an
+  # fnm_multishells folder that disappears later, so the fnm default alias,
+  # which is stable, goes first on PATH.
+  FNM_DEFAULT_BIN="$HOME/.local/share/fnm/aliases/default/bin"
+  if [ -x "$FNM_DEFAULT_BIN/gitnexus" ]; then
+    PATH="$FNM_DEFAULT_BIN:$PATH" gitnexus setup --coding-agent claude,codex >/dev/null 2>&1 &&
+      echo "  ✓ gitnexus  mcp and skills for claude and codex"
+  fi
+
+  codex_mcp() {
+    local name="$1"; shift
+    if codex mcp get "$name" >/dev/null 2>&1; then
+      echo "  ✓ codex     mcp $name"
+    else
+      codex mcp add "$name" "$@" >/dev/null && echo "  → codex     mcp $name"
+    fi
+  }
+  command -v serena >/dev/null 2>&1 &&
+    codex_mcp serena -- serena start-mcp-server --context=codex --project-from-cwd
+
+  if [ -d "$HOME/.claude/agents" ]; then
+    "$DOTFILES/ai/bin/codex-agents-sync" --src "$HOME/.claude/agents" --dest "$HOME/.codex/agents" |
+      sed 's/^/  /'
+    echo "  ✓ codex     agents from ~/.claude/agents"
   fi
 fi
 
