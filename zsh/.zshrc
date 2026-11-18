@@ -2,6 +2,19 @@
 #  ~/.zshrc
 # ============================================================
 
+# ---- SSH agent: keys live in the Secure Enclave via Secretive ----
+export SSH_AUTH_SOCK=$HOME/Library/Containers/com.maxgoedjen.Secretive.SecretAgent/Data/socket.ssh
+
+# ---- Node: fnm switches versions on cd (.nvmrc / .node-version) ----
+eval "$(fnm env --use-on-cd --shell zsh)"
+
+# ---- Privacy: telemetry off everywhere ----
+# DO_NOT_TRACK is the cross-tool convention many CLIs honor.
+export DO_NOT_TRACK=1
+export HOMEBREW_NO_ANALYTICS=1        # Homebrew
+export DISABLE_TELEMETRY=1            # Claude Code usage metrics
+export DISABLE_ERROR_REPORTING=1      # Claude Code crash reports
+
 # ---- PATH ----
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"               # Antigravity
@@ -40,20 +53,27 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 # ============================================================
 #  Plugins (Homebrew)
 # ============================================================
+# Every plugin and tool below is optional: a missing one is skipped, so a
+# new shell never opens with errors before the Brewfile is installed.
+has() { command -v "$1" >/dev/null 2>&1; }
+
 # Ghost suggestion pulled from history (press → to accept)
-source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#72696a'   # warm gray (Ristretto)
+if [[ -r /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+  ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#72696a'   # warm gray (Ristretto)
+fi
 
 # Syntax highlighting — MUST be the last thing sourced
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+[[ -r /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] &&
+  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # ============================================================
 #  Tools
 # ============================================================
-eval "$(starship init zsh)"   # prompt
-eval "$(zoxide init zsh)"     # smart cd: use `z <folder>`
-source <(fzf --zsh)           # fuzzy search: Ctrl+R history / Ctrl+T files / Alt+C cd
-eval "$(direnv hook zsh)"     # per-project env vars (.envrc), loaded automatically
+has starship && eval "$(starship init zsh)"   # prompt
+has zoxide   && eval "$(zoxide init zsh)"     # smart cd: use `z <folder>`
+has fzf      && source <(fzf --zsh)           # fuzzy search: Ctrl+R history / Ctrl+T files / Alt+C cd
+has direnv   && eval "$(direnv hook zsh)"     # per-project env vars (.envrc), loaded automatically
 
 # fzf powered by fd + Monokai Pro Ristretto colors
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
@@ -67,22 +87,33 @@ export FZF_DEFAULT_OPTS="--height 45% --layout=reverse --border=rounded \
 #  Aliases
 # ============================================================
 # ls -> eza (with icons; requires a Nerd Font)
-alias ls='eza --icons --group-directories-first'
-alias ll='eza -lah --icons --group-directories-first --git'
-alias la='eza -a  --icons --group-directories-first'
-alias lt='eza --tree --level=2 --icons --group-directories-first'
-alias tree='eza --tree --icons'
+if has eza; then
+  alias ls='eza --icons --group-directories-first'
+  alias ll='eza -lah --icons --group-directories-first --git'
+  alias la='eza -a  --icons --group-directories-first'
+  alias lt='eza --tree --level=2 --icons --group-directories-first'
+  alias tree='eza --tree --icons'
+fi
 
 # cat -> bat (pipe behavior is preserved automatically)
-alias cat='bat --paging=never'
-alias less='bat'
+if has bat; then
+  alias cat='bat --paging=never'
+  alias less='bat'
+fi
+
+# Editor: Neovim when installed, Zed otherwise
+if has nvim; then
+  export EDITOR='nvim'
+  alias v='nvim'
+elif has zed; then
+  export EDITOR='zed --wait'
+fi
 
 # handy shortcuts
-alias lg='lazygit'
-alias v='nvim'
+has lazygit && alias lg='lazygit'
 alias reload='source ~/.zshrc && echo "zsh reloaded ✔"'
-alias zshrc='${EDITOR:-nvim} ~/.zshrc'
-alias ghosttyrc='${EDITOR:-nvim} "$HOME/Library/Application Support/com.mitchellh.ghostty/config"'
+alias zshrc='${=EDITOR:-vi} ~/.zshrc'
+alias ghosttyrc='${=EDITOR:-vi} "$HOME/Library/Application Support/com.mitchellh.ghostty/config"'
 
 # quick git
 alias gs='git status -sb'
@@ -109,8 +140,6 @@ glog() {
 # Note: `fd` (modern find) and `rg` (ripgrep) stay unaliased so scripts
 # that expect the traditional find/grep keep working.
 
-export EDITOR='nvim'
-
 # Claude Code: chat scrolling at the finest granularity — 1 line per wheel
 # event (as close to a web page as a TUI gets; acceleration is already off
 # via wheelScrollAccelerationEnabled=false in settings.json).
@@ -125,7 +154,7 @@ export CLAUDE_CODE_SCROLL_SPEED=1
 export CLAUDE_CODE_DISABLE_MOUSE=false
 
 # bun completions
-[ -s "/Users/gustavogomes/.bun/_bun" ] && source "/Users/gustavogomes/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"

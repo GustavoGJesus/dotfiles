@@ -3,13 +3,7 @@
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
 
-# ============================================================
-#  fnm — fast Node version manager (Rust, ~10ms startup)
-#  --use-on-cd: entering a project with .nvmrc/.node-version
-#  switches the Node version automatically. If a version is
-#  missing, run `fnm install` once inside that project.
-# ============================================================
-eval "$(fnm env --use-on-cd --shell zsh)"
+# fnm is set up in .zshrc, so every interactive shell gets it, login or not.
 
 # Added by OrbStack: command-line tools and integration
 # This won't be added again if you remove it.

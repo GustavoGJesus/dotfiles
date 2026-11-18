@@ -17,6 +17,7 @@ brew "zoxide"
 brew "fd"
 brew "ripgrep"
 brew "git-delta"
+brew "gitleaks"   # secret scan before every commit (git/.gitconfig hook)
 
 # Git & workflow
 brew "gh"

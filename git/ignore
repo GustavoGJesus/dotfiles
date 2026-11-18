@@ -1,0 +1,6 @@
+# Global gitignore, linked to ~/.config/git/ignore.
+# A repo that must version an example file adds `!.env.example` to its own
+# .gitignore.
+.env
+.env.*
+.DS_Store

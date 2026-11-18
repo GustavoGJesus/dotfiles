@@ -1,8 +1,10 @@
 [user]
 	name = GustavoGJesus
-	email = gustavogomesdev@proton.me
+	# GitHub's noreply address: this file is public and so is every commit.
+	email = 3106838+GustavoGJesus@users.noreply.github.com
 [core]
 	pager = delta
+	excludesFile = ~/.config/git/ignore
 [interactive]
 	diffFilter = delta --color-only
 [delta]
@@ -42,3 +44,18 @@
 	enabled = true
 [branch]
 	sort = -committerdate
+
+# ---- secrets: gitleaks scans what is staged before every commit ----
+# A config-based hook (git 2.54+) runs before, not instead of, the repo's own
+# pre-commit hook, so husky and .git/hooks keep working. Skip it in one repo
+# with `git config hook.gitleaks.enabled false`.
+[hook "gitleaks"]
+	event = pre-commit
+	command = /opt/homebrew/bin/gitleaks git --pre-commit --staged --redact --verbose --no-banner
+
+# ---- per machine: the commit signing setup, never versioned ----
+# user.signingkey, commit.gpgsign, gpg.format and gpg.ssh.allowedSignersFile
+# live in ~/.gitconfig.local. install.sh moves them there from an existing
+# ~/.gitconfig before linking this file. Kept last so it wins.
+[include]
+	path = ~/.gitconfig.local

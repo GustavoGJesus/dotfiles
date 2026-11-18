@@ -9,7 +9,8 @@ A beautiful, comfortable and blazing-fast terminal workspace for macOS — **Tok
 | Folder | File | Linked to |
 |--------|------|-----------|
 | `zsh/` | `.zshrc`, `.zprofile` | `~/.zshrc`, `~/.zprofile` |
-| `git/` | `.gitconfig` | `~/.gitconfig` |
+| `git/` | `.gitconfig` | `~/.gitconfig` (commit signing stays in the unversioned `~/.gitconfig.local`) |
+| `git/` | `ignore` | `~/.config/git/ignore` |
 | `starship/` | `starship.toml` | `~/.config/starship.toml` |
 | `ghostty/` | `config` | `~/Library/Application Support/com.mitchellh.ghostty/config` |
 | `lazygit/` | `config.yml` | `~/Library/Application Support/lazygit/config.yml` |

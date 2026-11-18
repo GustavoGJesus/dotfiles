@@ -11,11 +11,41 @@ DOTFILES="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
 STAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP="$HOME/.dotfiles-backup/$STAMP"
 
-# Toolchain first: install everything from the Brewfile (skipped without brew)
+# Toolchain first: install everything from the Brewfile. Skipped without brew,
+# and when Homebrew belongs to another account (a standard user cannot write
+# to it): then the owner installs the Brewfile.
 if command -v brew >/dev/null 2>&1; then
-  echo "Installing Homebrew packages from the Brewfile…"
-  brew bundle --file="$DOTFILES/Brewfile" --no-upgrade || true
+  if [ -w "$(brew --prefix)/bin" ]; then
+    echo "Installing Homebrew packages from the Brewfile…"
+    brew bundle --file="$DOTFILES/Brewfile" --no-upgrade || true
+  else
+    echo "Homebrew is not writable by $(id -un): skipping the Brewfile."
+    echo "  Ask its owner to run: brew bundle --file=$DOTFILES/Brewfile"
+  fi
   echo
+fi
+
+# Many files point at ~/dotfiles (the CLAUDE.md import, the Brewfile hint,
+# herdr). When the repo lives elsewhere, link ~/dotfiles to it.
+if [ "$DOTFILES" != "$HOME/dotfiles" ] && [ ! -e "$HOME/dotfiles" ] && [ ! -L "$HOME/dotfiles" ]; then
+  ln -s "$DOTFILES" "$HOME/dotfiles"
+  echo "  → linked    ~/dotfiles → ${DOTFILES/#$HOME/~}"
+fi
+
+# Commit signing is per machine and stays out of the repo: git/.gitconfig
+# includes ~/.gitconfig.local. Before a real ~/.gitconfig is replaced by the
+# link, its signing keys are copied there unchanged. An existing
+# ~/.gitconfig.local is never touched.
+GITLOCAL="$HOME/.gitconfig.local"
+if [ -f "$HOME/.gitconfig" ] && [ ! -L "$HOME/.gitconfig" ] && [ ! -e "$GITLOCAL" ]; then
+  moved=""
+  for key in user.signingkey commit.gpgsign gpg.format gpg.ssh.allowedSignersFile; do
+    if value="$(git config --file "$HOME/.gitconfig" --get "$key")"; then
+      git config --file "$GITLOCAL" "$key" "$value"
+      moved="$moved $key"
+    fi
+  done
+  [ -n "$moved" ] && echo "  → kept      ~/.gitconfig.local:$moved"
 fi
 
 # Mapping:  path-in-repo | absolute-destination
@@ -23,6 +53,7 @@ PAIRS="
 zsh/.zshrc|$HOME/.zshrc
 zsh/.zprofile|$HOME/.zprofile
 git/.gitconfig|$HOME/.gitconfig
+git/ignore|$HOME/.config/git/ignore
 starship/starship.toml|$HOME/.config/starship.toml
 ghostty/config|$HOME/Library/Application Support/com.mitchellh.ghostty/config
 lazygit/config.yml|$HOME/Library/Application Support/lazygit/config.yml
