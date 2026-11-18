@@ -1,7 +1,7 @@
 [user]
 	name = GustavoGJesus
 	# GitHub's noreply address: this file is public and so is every commit.
-	email = 3106838+GustavoGJesus@users.noreply.github.com
+	email = 83106838+GustavoGJesus@users.noreply.github.com
 [core]
 	pager = delta
 	excludesFile = ~/.config/git/ignore
