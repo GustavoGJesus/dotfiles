@@ -39,6 +39,8 @@ setopt INC_APPEND_HISTORY
 # ============================================================
 # Homebrew formulas (herdr, gh, …) ship their own completions into
 # site-functions, already on fpath via `brew shellenv` in .zprofile.
+# install.sh writes the completions tools generate themselves (codex) here.
+fpath=("$HOME/.local/share/zsh-completions" $fpath)
 # cached compinit: full re-scan at most once a day (faster startup)
 autoload -Uz compinit
 if [[ -n ${ZDOTDIR:-$HOME}/.zcompdump(#qN.mh-24) ]]; then
@@ -49,6 +51,8 @@ fi
 zstyle ':completion:*' menu select
 zstyle ':completion:*' matcher-list 'm:{a-zA-Z}={A-Za-z}'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+# Claude Code ships no completion: its options are read from `claude --help`.
+compdef _gnu_generic claude
 
 # ============================================================
 #  Plugins (Homebrew)
@@ -57,15 +61,25 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 # new shell never opens with errors before the Brewfile is installed.
 has() { command -v "$1" >/dev/null 2>&1; }
 
-# Ghost suggestion pulled from history (press → to accept)
-if [[ -r /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-  source /opt/homebrew/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+# Homebrew's copy, or the one install.sh clones where Homebrew is not usable.
+plugin() {
+  local dir
+  for dir in /opt/homebrew/share "$HOME/.local/share/zsh-plugins"; do
+    [[ -r $dir/$1/$1.zsh ]] && { source "$dir/$1/$1.zsh"; return 0; }
+  done
+  return 1
+}
+
+# Ghost suggestion while typing (press → to accept): the last matching command
+# from history, else what tab completion would offer, so `claude --dang` is
+# completed to `claude --dangerously-skip-permissions` the first time too.
+if plugin zsh-autosuggestions; then
+  ZSH_AUTOSUGGEST_STRATEGY=(history completion)
   ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#72696a'   # warm gray (Ristretto)
 fi
 
 # Syntax highlighting — MUST be the last thing sourced
-[[ -r /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] &&
-  source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+plugin zsh-syntax-highlighting
 
 # ============================================================
 #  Tools

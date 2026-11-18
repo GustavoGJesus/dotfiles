@@ -29,7 +29,7 @@ A beautiful, comfortable and blazing-fast terminal workspace for macOS — **Tok
 
 - **Terminal:** [Ghostty](https://ghostty.org) — Tokyo Night theme, FiraCode Nerd Font, frosted-glass background, global quick terminal on <kbd>⌘</kbd><kbd>`</kbd>
 - **Workspace manager:** [Herdr](https://herdr.dev) — panes and workspaces built for AI coding agents, with lazygit popup, diff-review sidebar and Linear worktree shortcuts
-- **Shell:** zsh + [Starship](https://starship.rs) one-line prompt + autosuggestions + syntax highlighting
+- **Shell:** zsh + [Starship](https://starship.rs) one-line prompt + autosuggestions + syntax highlighting. The ghost suggestion comes from history, then from tab completion, so `claude --dang` is completed to `claude --dangerously-skip-permissions` (press <kbd>→</kbd>)
 - **Modern CLI:** eza · bat · fzf · zoxide · fd · ripgrep · git-delta · lazygit · neovim
 - **Node toolchain:** fnm (auto-switches versions on `cd`) · ni (picks npm/pnpm/yarn from the lockfile) · direnv (per-project env vars)
 - **Coding agents:** Claude Code and Codex side by side, sharing one set of global instructions, skills, session briefing and guardrails (see below)

@@ -25,6 +25,40 @@ if command -v brew >/dev/null 2>&1; then
   echo
 fi
 
+# zsh plugins: the Brewfile brings them, but not on a machine where Homebrew
+# could not be used above. There they are cloned into ~/.local/share/zsh-plugins,
+# the second place zsh/.zshrc looks.
+ZSH_PLUGINS="$HOME/.local/share/zsh-plugins"
+for plugin in zsh-autosuggestions zsh-syntax-highlighting; do
+  if [ -r "/opt/homebrew/share/$plugin/$plugin.zsh" ] || [ -r "$ZSH_PLUGINS/$plugin/$plugin.zsh" ]; then
+    echo "  ✓ zsh       $plugin"
+  elif git clone --quiet --depth 1 "https://github.com/zsh-users/$plugin.git" "$ZSH_PLUGINS/$plugin"; then
+    echo "  → zsh       $plugin cloned into $ZSH_PLUGINS"
+  else
+    echo "  ! zsh       $plugin could not be cloned"
+  fi
+done
+
+# Codex ships its own zsh completion; it is written where zsh/.zshrc adds it
+# to fpath. The completion cache is dropped so the next shell picks it up.
+if command -v codex >/dev/null 2>&1; then
+  mkdir -p "$HOME/.local/share/zsh-completions"
+  if codex completion zsh > "$HOME/.local/share/zsh-completions/_codex.new" 2>/dev/null \
+     && [ -s "$HOME/.local/share/zsh-completions/_codex.new" ]; then
+    if cmp -s "$HOME/.local/share/zsh-completions/_codex.new" "$HOME/.local/share/zsh-completions/_codex"; then
+      rm "$HOME/.local/share/zsh-completions/_codex.new"
+      echo "  ✓ zsh       codex completion"
+    else
+      mv "$HOME/.local/share/zsh-completions/_codex.new" "$HOME/.local/share/zsh-completions/_codex"
+      rm -f "$HOME/.zcompdump"
+      echo "  → zsh       codex completion"
+    fi
+  else
+    rm -f "$HOME/.local/share/zsh-completions/_codex.new"
+  fi
+fi
+echo
+
 # Many files point at ~/dotfiles (the CLAUDE.md import, the Brewfile hint,
 # herdr). When the repo lives elsewhere, link ~/dotfiles to it.
 if [ "$DOTFILES" != "$HOME/dotfiles" ] && [ ! -e "$HOME/dotfiles" ] && [ ! -L "$HOME/dotfiles" ]; then
