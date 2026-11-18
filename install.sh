@@ -59,6 +59,18 @@ if command -v codex >/dev/null 2>&1; then
 fi
 echo
 
+# Hardening that lives outside the linked files. npm stops running the
+# install scripts of dependencies, the usual way a malicious package executes
+# (a package that needs its script is built on purpose with `npm rebuild`).
+# ~/.npmrc is written by npm and not linked, since it may hold tokens later.
+# New documents default to the local disk instead of iCloud.
+if command -v npm >/dev/null 2>&1 && [ "$(npm config get ignore-scripts)" != "true" ]; then
+  npm config set ignore-scripts true && echo "  → npm       install scripts disabled"
+fi
+if [ "$(uname)" = Darwin ]; then
+  defaults write NSGlobalDomain NSDocumentSaveNewDocumentsToCloud -bool false
+fi
+
 # Many files point at ~/dotfiles (the CLAUDE.md import, the Brewfile hint,
 # herdr). When the repo lives elsewhere, link ~/dotfiles to it.
 if [ "$DOTFILES" != "$HOME/dotfiles" ] && [ ! -e "$HOME/dotfiles" ] && [ ! -L "$HOME/dotfiles" ]; then

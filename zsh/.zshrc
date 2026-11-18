@@ -15,6 +15,10 @@ export HOMEBREW_NO_ANALYTICS=1        # Homebrew
 export DISABLE_TELEMETRY=1            # Claude Code usage metrics
 export DISABLE_ERROR_REPORTING=1      # Claude Code crash reports
 
+# ---- New files and folders are readable by this user only ----
+# The default 022 leaves everything created from a shell world-readable.
+umask 077
+
 # ---- PATH ----
 export PATH="$HOME/.local/bin:$PATH"
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"               # Antigravity
