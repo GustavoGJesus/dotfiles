@@ -123,3 +123,10 @@ export CLAUDE_CODE_SCROLL_SPEED=1
 # alternate-scroll turns the wheel into ↑/↓ arrows and scrolling becomes
 # prompt-history navigation in the input instead of scrolling the chat.
 export CLAUDE_CODE_DISABLE_MOUSE=false
+
+# bun completions
+[ -s "/Users/gustavogomes/.bun/_bun" ] && source "/Users/gustavogomes/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
