@@ -131,6 +131,7 @@ fi
 # differs is left alone and reported.
 echo
 echo "Linking personal skills for Claude Code…"
+mkdir -p "$HOME/.claude/skills"
 for skill in "$HOME/.agents/skills"/*/; do
   skill="${skill%/}"
   name="$(basename "$skill")"
@@ -163,6 +164,16 @@ if command -v jq >/dev/null 2>&1 && [ -f "$SETTINGS" ]; then
       [{"matcher": "*", "hooks": [{"type": "command", "command": $c, "timeout": 5}]}])' \
       "$SETTINGS" >"$tmp" && mv "$tmp" "$SETTINGS"
     echo "  → claude    session briefing hook registered"
+  fi
+  # The status line, unless one is already set (a local choice is kept).
+  if jq -e '.statusLine' "$SETTINGS" >/dev/null; then
+    echo "  ✓ claude    status line"
+  else
+    tmp="$(mktemp)"
+    jq --arg c "bash '$HOME/.claude/statusline.sh'" \
+      '.statusLine = {"type": "command", "command": $c, "padding": 0}' \
+      "$SETTINGS" >"$tmp" && mv "$tmp" "$SETTINGS"
+    echo "  → claude    status line registered"
   fi
 fi
 
@@ -208,11 +219,14 @@ if command -v codex >/dev/null 2>&1; then
   # Codex has no status line script, only built-in items, so the keys are
   # written into [tui] when missing and a local change is never overwritten.
   # The thread title in the terminal title is what Herdr's sidebar shows.
+  # The macOS system python3 is 3.9 (no tomllib), so the [tui] keys are found
+  # by scanning the section text instead of parsing the file.
   CODEX_CONFIG="$HOME/.codex/config.toml" python3 - <<'PY'
-import os, re, tomllib
+import os, re
 path = os.environ["CODEX_CONFIG"]
 text = open(path).read() if os.path.exists(path) else ""
-tui = tomllib.loads(text).get("tui", {})
+section = re.search(r"^\[tui\][ \t]*(?:#.*)?\n(.*?)(?=^\[|\Z)", text, re.M | re.S)
+tui = set(re.findall(r"^[ \t]*([A-Za-z0-9_-]+)[ \t]*=", section.group(1), re.M)) if section else set()
 wanted = {
     "status_line": '["model-with-reasoning", "current-dir", "git-branch", "context-used", '
                    '"five-hour-limit", "weekly-limit", "estimated-thread-cost"]',
