@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  Per-user LaunchAgent for the vault drop folder. launchd runs `vault sweep`
+  whenever something is added to the folder, and once at login to pick up
+  anything that arrived while the job was not loaded.
+
+  launchd expands nothing, so install.sh substitutes the placeholder:
+
+    __HOME__  absolute path to the user's home directory
+
+  The script is run from ~/.local/bin, a copy made by install.sh. A job
+  started by launchd may not read ~/Documents (macOS privacy protection), so
+  it cannot run the file inside the repository.
+-->
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>dev.dotfiles.vault</string>
+
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/bash</string>
+    <string>__HOME__/.local/bin/vault</string>
+    <string>sweep</string>
+  </array>
+
+  <key>WatchPaths</key>
+  <array>
+    <string>__HOME__/Cofre</string>
+  </array>
+
+  <key>RunAtLoad</key>
+  <true/>
+
+  <key>StandardOutPath</key>
+  <string>__HOME__/Library/Logs/vault.log</string>
+  <key>StandardErrorPath</key>
+  <string>__HOME__/Library/Logs/vault.log</string>
+</dict>
+</plist>

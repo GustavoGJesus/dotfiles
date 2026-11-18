@@ -314,6 +314,24 @@ if [ -x "$AIM_BIN" ]; then
   launchctl bootstrap "gui/$(id -u)" "$AIM_PLIST" && echo "  ✓ ai-memory LaunchAgent loaded"
 fi
 
+# vault: the drop folder that encrypts with age (see vault/vault). The script
+# is copied, not linked, because the LaunchAgent that watches the folder may
+# not read ~/Documents, where this repository usually lives. Re-run install.sh
+# after editing vault/vault. The agent is only loaded once the keys exist;
+# they are created by hand and never stored here (README, "Encrypted vault").
+mkdir -p "$HOME/.local/bin"
+install -m 755 "$DOTFILES/vault/vault" "$HOME/.local/bin/vault"
+if [ -r "$HOME/.config/age/recipientes.txt" ]; then
+  VAULT_PLIST="$HOME/Library/LaunchAgents/dev.dotfiles.vault.plist"
+  mkdir -p "$HOME/Library/LaunchAgents" "$HOME/Library/Logs" "$HOME/Cofre"
+  chmod 700 "$HOME/Cofre"
+  sed -e "s|__HOME__|$HOME|g" "$DOTFILES/vault/launchagent.plist.template" >"$VAULT_PLIST"
+  launchctl bootout "gui/$(id -u)" "$VAULT_PLIST" >/dev/null 2>&1 || true
+  launchctl bootstrap "gui/$(id -u)" "$VAULT_PLIST" && echo "  ✓ vault     LaunchAgent watching ~/Cofre"
+else
+  echo "  ! vault     no keys in ~/.config/age yet: the drop folder is not watched"
+fi
+
 echo
 if [ -d "$BACKUP" ]; then
   echo "Backups saved to: ${BACKUP/#$HOME/~}"

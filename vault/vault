@@ -1,0 +1,197 @@
+#!/bin/bash
+# ============================================================
+#  vault — a drop folder that encrypts whatever lands in it
+#
+#  Anything moved into ~/Cofre is encrypted with age to every recipient in
+#  ~/.config/age/recipientes.txt and the original is deleted. Encrypting only
+#  needs public keys, so it runs unattended (a LaunchAgent watches the
+#  folder). Opening needs the private key held in the Secure Enclave, which
+#  asks for the login password every time, so it is always done by hand.
+#
+#    vault sweep          encrypt everything waiting in the folder
+#    vault open FILE.age  decrypt into ~/Cofre/Aberto (asks for the password)
+#    vault close          re-encrypt what changed in Aberto, then empty it
+#    vault status         what is encrypted and what is lying open
+#
+#  The keys are never created or read from the repository; see README.md.
+# ============================================================
+set -euo pipefail
+umask 077
+# launchd starts jobs with a bare PATH; age and its plugin live in Homebrew.
+export PATH="/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
+VAULT="${VAULT_DIR:-$HOME/Cofre}"
+OPEN="$VAULT/Aberto"
+KEYS="${VAULT_KEYS:-$HOME/.config/age}"
+RECIPIENTS="$KEYS/recipientes.txt"
+IDENTITY="$KEYS/se-identity.txt"
+LOG="$HOME/Library/Logs/vault.log"
+LOCK="$VAULT/.vault-lock"
+
+log() { printf '%s %s\n' "$(date '+%Y-%m-%d %H:%M:%S')" "$*" >>"$LOG"; }
+die() { echo "vault: $*" >&2; exit 1; }
+
+notify() {
+  /usr/bin/osascript -e "display notification \"$2\" with title \"$1\"" >/dev/null 2>&1 || true
+}
+
+need_recipients() {
+  command -v age >/dev/null 2>&1 || die "age is not installed"
+  [ -r "$RECIPIENTS" ] || die "no recipients file at $RECIPIENTS"
+  grep -q '^age1' "$RECIPIENTS" || die "$RECIPIENTS lists no recipient"
+}
+
+# A browser or Finder may still be writing: wait until the size stops moving.
+wait_stable() {
+  local last=-1 now tries=0
+  while [ "$tries" -lt 60 ]; do
+    now="$(du -sk "$1" 2>/dev/null | cut -f1)"
+    [ "$now" = "$last" ] && return 0
+    last="$now"; tries=$((tries + 1)); sleep 2
+  done
+  return 1
+}
+
+# The header of an age file has one "-> " line per recipient and ends at "---".
+stanzas() { awk '/^---/ {exit} /^-> / {n++} END {print n + 0}' "$1"; }
+
+# Encrypts SRC (file or directory) to DEST and checks the result before the
+# caller removes anything. The output is written under a hidden temporary
+# name and renamed, so a half-written .age never sits in the folder.
+encrypt_to() {
+  local src="$1" dest="$2" tmp="$VAULT/.vault-tmp.$$" want got
+  rm -f "$tmp"
+  if [ -d "$src" ]; then
+    tar -czf - -C "$(dirname "$src")" "$(basename "$src")" | age -R "$RECIPIENTS" -o "$tmp"
+  else
+    age -R "$RECIPIENTS" -o "$tmp" -- "$src"
+  fi
+  want="$(grep -c '^age1' "$RECIPIENTS")"
+  got="$(stanzas "$tmp")"
+  if [ ! -s "$tmp" ] || [ "$got" != "$want" ]; then
+    rm -f "$tmp"
+    return 1
+  fi
+  mv -f "$tmp" "$dest"
+}
+
+sweep() {
+  need_recipients
+  mkdir -p "$VAULT"
+  # One sweep at a time: launchd fires again for the changes a sweep makes.
+  mkdir "$LOCK" 2>/dev/null || exit 0
+  trap 'rmdir "$LOCK" 2>/dev/null || true' EXIT
+
+  local src name dest
+  for src in "$VAULT"/*; do
+    [ -e "$src" ] || continue
+    name="$(basename "$src")"
+    case "$name" in
+      *.age | Aberto) continue ;;
+      *.crdownload | *.download | *.part | *.partial | *.tmp) continue ;;
+    esac
+    if ! wait_stable "$src"; then
+      log "skipped (still changing): $name"
+      continue
+    fi
+    if [ -d "$src" ]; then dest="$VAULT/$name.tar.gz.age"; else dest="$VAULT/$name.age"; fi
+    # Never overwrite an earlier encrypted file with the same name.
+    if [ -e "$dest" ]; then
+      dest="${dest%.age}.$(date +%Y%m%d-%H%M%S).age"
+    fi
+    if encrypt_to "$src" "$dest"; then
+      rm -rf -- "$src"
+      log "encrypted: $name -> $(basename "$dest")"
+      notify "Cofre" "Cifrado: $name"
+    else
+      log "FAILED, original kept: $name"
+      notify "Cofre" "Falha ao cifrar $name. O original foi mantido."
+    fi
+  done
+}
+
+open_file() {
+  local file="${1:-}" base out
+  [ -n "$file" ] || die "usage: vault open FILE.age"
+  [ -f "$file" ] || file="$VAULT/$file"
+  [ -f "$file" ] || die "no such file: $1"
+  case "$file" in *.age) ;; *) die "not an .age file: $file" ;; esac
+  [ -r "$IDENTITY" ] || die "no identity file at $IDENTITY"
+  mkdir -p "$OPEN"
+  base="$(basename "${file%.age}")"
+  case "$base" in
+    *.tar.gz)
+      # Extracted files keep the dates stored in the archive, all older than
+      # the .age, so `close` can tell which ones were edited.
+      age -d -i "$IDENTITY" -- "$file" | tar -xzf - -C "$OPEN"
+      out="$OPEN/${base%.tar.gz}"
+      ;;
+    *)
+      out="$OPEN/$base"
+      age -d -i "$IDENTITY" -o "$out" -- "$file"
+      touch -r "$file" "$out"
+      ;;
+  esac
+  log "opened: $(basename "$file")"
+  echo "Aberto em: $out"
+  echo "Quando terminar: vault close"
+}
+
+close_all() {
+  need_recipients
+  [ -d "$OPEN" ] || { echo "Nada aberto."; return 0; }
+  local item name enc changed
+  for item in "$OPEN"/*; do
+    [ -e "$item" ] || continue
+    name="$(basename "$item")"
+    if [ -d "$item" ]; then enc="$VAULT/$name.tar.gz.age"; else enc="$VAULT/$name.age"; fi
+    if [ ! -e "$enc" ]; then
+      # Not something `open` produced: hand it to the drop folder as new.
+      mv -- "$item" "$VAULT/"
+      echo "novo, vai ser cifrado: $name"
+      continue
+    fi
+    if [ -d "$item" ]; then
+      changed="$(find "$item" -type f -newer "$enc" -print -quit)"
+    else
+      changed=""; [ "$item" -nt "$enc" ] && changed=1
+    fi
+    if [ -n "$changed" ]; then
+      if encrypt_to "$item" "$enc"; then
+        echo "alterado, cifrado de novo: $name"
+        log "re-encrypted: $name"
+      else
+        echo "FALHA ao cifrar $name: a copia aberta foi mantida em $OPEN" >&2
+        log "FAILED re-encrypt, plaintext kept: $name"
+        continue
+      fi
+    else
+      echo "sem alteracao: $name"
+    fi
+    rm -rf -- "$item"
+  done
+  rmdir "$OPEN" 2>/dev/null || true
+  sweep
+}
+
+status() {
+  local n
+  echo "Cofre: $VAULT"
+  n="$(find "$VAULT" -maxdepth 1 -name '*.age' 2>/dev/null | wc -l | tr -d ' ')"
+  echo "  cifrados: $n"
+  find "$VAULT" -maxdepth 1 -name '*.age' -exec basename {} \; 2>/dev/null | sort | sed 's/^/    /'
+  if [ -d "$OPEN" ] && [ -n "$(ls -A "$OPEN" 2>/dev/null)" ]; then
+    echo "  ABERTOS (em claro), feche com: vault close"
+    ls -A "$OPEN" | sed 's/^/    /'
+  else
+    echo "  nada aberto"
+  fi
+}
+
+case "${1:-}" in
+  sweep) sweep ;;
+  open) shift; open_file "$@" ;;
+  close) close_all ;;
+  status) status ;;
+  *) sed -n '4,17p' "$0" | sed 's/^#  \{0,1\}//'; exit 1 ;;
+esac

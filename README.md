@@ -24,6 +24,7 @@ A beautiful, comfortable and blazing-fast terminal workspace for macOS — **Tok
 | `ai/` | `codex/rules/safety.rules` | `~/.codex/rules/safety.rules` |
 | `ai/` | `bin/codex-agents-sync` | `~/.local/bin/codex-agents-sync` |
 | `claude/` | `themes/*.json`, `statusline.sh`, `CLAUDE.md` | `~/.claude/` |
+| `vault/` | `vault` | copied to `~/.local/bin/vault` (a LaunchAgent cannot read `~/Documents`) |
 
 ## The stack
 
@@ -135,6 +136,42 @@ Wire a project with `ai-memory install-hooks --agent claude-code
 http://127.0.0.1:49374/mcp -s local`, run once from inside the repo; the
 hooks go in that project's `.claude/settings.local.json`, so only opted-in
 projects are captured.
+
+## Encrypted vault
+
+`~/Cofre` is a drop folder: whatever is moved into it is encrypted with
+[age](https://github.com/FiloSottile/age) within seconds and the original is
+deleted. A LaunchAgent watches the folder and runs `vault sweep`. Encrypting
+only needs public keys, so it runs unattended. Opening is always manual,
+because the private key lives in the Secure Enclave and asks for the login
+password on every use:
+
+```bash
+vault open contract.pdf.age   # decrypts into ~/Cofre/Aberto
+vault close                   # re-encrypts what changed, deletes the open copies
+vault status
+```
+
+Every file is encrypted to two post-quantum recipients listed in
+`~/.config/age/recipientes.txt`: the Secure Enclave key of this Mac
+([age-plugin-se](https://github.com/remko/age-plugin-se)) and a backup key
+whose identity is passphrase-protected and stored off the machine. The keys
+are not in this repository and are created once by hand:
+
+```bash
+brew install age age-plugin-se          # as the Homebrew owner
+mkdir -p ~/.config/age && cd ~/.config/age
+age-plugin-se keygen --pq --access-control=passcode -o se-identity.txt
+age-keygen -pq 2> backup-public.tmp | age -p -o reserva-identidade.age
+```
+
+`recipientes.txt` then gets two lines: the `# public key (post-quantum)`
+value from the header of `se-identity.txt` and the `Public key` printed into
+`backup-public.tmp`. Test a decryption with each identity before trusting it,
+move `reserva-identidade.age` off the Mac and run `./install.sh` to load the
+LaunchAgent. The Secure Enclave key does not survive erasing the Mac: after a
+rebuild, generate a new one, update `recipientes.txt` and re-encrypt from the
+backup identity.
 
 ## Install on a new machine
 
